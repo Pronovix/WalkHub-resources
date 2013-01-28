@@ -26,12 +26,18 @@ Walkthrough = {};
     return "px-walkthrough-" + globalCounter++;
   }
 
+  var previousJoyride = null;
   function createJoyrideBoilerplate(element, command) {
     var uniq = uniqueID();
 
+    if (previousJoyride) {
+      previousJoyride.joyride('end');
+      previousJoyride.joyride('destroy');
+    }
+
     element.addClass(uniq);
 
-    var ol = $('<ol />')
+    previousJoyride = $('<ol />')
       .append(
         $('<li />')
           .html(command['description'])
