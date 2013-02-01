@@ -88,6 +88,10 @@ Walkthrough = {};
       if (!command['highlight']) {
         createJoyrideBoilerplate(translator(command['arg1']), command);
       }
+    },
+    "type": function (command) {
+      translator(command['arg1'])
+        .val(command['arg2']);
     }
   };
 
