@@ -6,7 +6,7 @@ Walkthrough = {};
 
   function sendMessage(type, message) {
     $('<iframe />')
-      .attr('src', 'walkthrough-' + type + '://localhost/?' + message)
+      .attr('src', 'walkthrough-' + type + '://localhost/?' + encodeURIComponent(message))
       .hide()
       .appendTo($('body'));
   }
