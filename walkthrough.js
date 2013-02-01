@@ -15,6 +15,51 @@ Walkthrough = {};
     return $('<div>').append(element.clone()).html();
   }
 
+  function translator(command) {
+    console.log('Command log: ' + command);
+
+    var $jQuerySelector;
+    var $locatorType;
+    var $locatorArgument;
+
+    // splitting the command
+    $splittedCommand = command.split("=");
+    $locatorType = $splittedCommand[0];
+    $locatorArgument = $splittedCommand[1];
+
+    // create the jQuery selector from locator type
+    switch($locatorType) {
+      case 'identifier':
+        $jQuerySelector = $('#' + $locatorArgument);
+        if ($jQuerySelector === null) {
+          $jQuerySelector = $("[name='" + $locatorArgument + "']");
+        }
+        break;
+      case 'id':
+        $jQuerySelector = $("#" + $locatorArgument + );
+        break;
+      case 'name':
+        $jQuerySelector = $("[name=" + $locatorArgument + "]");
+        break;
+      case 'dom':
+        // TODO: Find an element by evaluating the specified string.
+        break;
+      case 'xpath':
+        // TODO: Locate an element using an XPath expression.
+        break;
+      case 'link':
+        $jQuerySelector = $("a:contains('" + $locatorArgument + "')");
+        break;
+      case 'css':
+        $jQuerySelector = $($locatorArgument);
+        break;
+      case 'ui':
+        // TODO: Locate an element by resolving the UI specifier string to another locator, and evaluating it.
+        break;
+    }
+    return $jQuerySelector;
+  }
+
   var console = {
     'log': function (obj) {
       sendMessage('log', obj);
@@ -53,7 +98,7 @@ Walkthrough = {};
   // Dispatch command
   var commands = {
     "click": function (command) {
-      var element = $(command['arg1']);
+      var element = translator(command['arg1']);
       createJoyrideBoilerplate(element, command);
     }
   };
