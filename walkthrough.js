@@ -85,8 +85,9 @@ Walkthrough = {};
   // Dispatch command
   var commands = {
     "click": function (command) {
-      var element = translator(command['arg1']);
-      createJoyrideBoilerplate(element, command);
+      if (!command['highlight']) {
+        createJoyrideBoilerplate(translator(command['arg1']), command);
+      }
     }
   };
 
@@ -108,8 +109,12 @@ Walkthrough = {};
     // This is very important. This script runs synchronously, which means that if
     // something locks here, the whole app will freeze/deadlock.
     setTimeout(function () {
-      // TODO Check if it's a valid command
-      commands[command['pureCommand']](command);
+      if (command['highlight']) {
+        createJoyrideBoilerplate(translator(command['highlight']), command);
+      }
+      if (commands[command['pureCommand']]) {
+        commands[command['pureCommand']](command);
+      }
     }, 0);
   };
 
