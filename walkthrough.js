@@ -11,6 +11,13 @@ Walkthrough = {};
       .appendTo($('body'));
   }
 
+  function stepCompleted() {
+    $('<iframe />')
+      .attr('src', 'walkthrough-stepcompleted://localhost')
+      .hide()
+      .appendTo($('body'));
+  }
+
   function elementToHtml(element) {
     return $('<div>').append(element.clone()).html();
   }
@@ -84,14 +91,28 @@ Walkthrough = {};
 
   // Dispatch command
   var commands = {
-    "click": function (command) {
-      if (!command['highlight']) {
-        createJoyrideBoilerplate(translator(command['arg1']), command);
+    "click": {
+      'init': function (command) {
+       translator(command['arg1'])
+         .bind('click', stepCompleted);
+      },
+      'execute': function (command) {
+       translator(command['arg1'])
+         .click();
       }
     },
-    "type": function (command) {
-      translator(command['arg1'])
-        .val(command['arg2']);
+    "type": {
+      'init': function (command) {
+        translator(command['arg1']).bind('change', function () {
+          if ($(this).val() == command['arg2']) {
+            stepCompleted();
+          }
+        });
+      },
+      'execute': function (command) {
+        translator(command['arg1'])
+          .val(command['arg2']);
+      }
     }
   };
 
@@ -108,16 +129,19 @@ Walkthrough = {};
    *    string arg2
    *    string highlight
    *    bool andWait
+   * @param force
    */
-  Walkthrough.execute = function (command) {
+  Walkthrough.execute = function (command, force) {
     // This is very important. This script runs synchronously, which means that if
     // something locks here, the whole app will freeze/deadlock.
     setTimeout(function () {
-      if (command['highlight']) {
-        createJoyrideBoilerplate(translator(command['highlight']), command);
-      }
       if (commands[command['pureCommand']]) {
-        commands[command['pureCommand']](command);
+        if (command['highlight'] && !force) {
+          createJoyrideBoilerplate(translator(command['highlight']), command);
+          commands[command['pureCommand']]['init'](command);
+        } else {
+          commands[command['pureCommand']]['execute'](command);
+        }
       }
     }, 0);
   };
