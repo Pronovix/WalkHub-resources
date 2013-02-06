@@ -12,10 +12,7 @@ Walkthrough = {};
   }
 
   function stepCompleted() {
-    $('<iframe />')
-      .attr('src', 'walkthrough-stepcompleted://localhost')
-      .hide()
-      .appendTo($('body'));
+    sendMessage('stepcompleted');
   }
 
   function elementToHtml(element) {
