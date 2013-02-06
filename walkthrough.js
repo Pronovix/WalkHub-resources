@@ -94,20 +94,25 @@ Walkthrough = {};
     "click": {
       'init': function (command) {
        translator(command['arg1'])
-         .bind('click', stepCompleted);
+         .unbind('click.walkthough')
+         .bind('click.walkthrough', stepCompleted);
       },
       'execute': function (command) {
-       translator(command['arg1'])
-         .click();
+        console.log(":(");
+        var element = translator(command['arg1']);
+        var raw = element.get(0);
+        raw.click();
       }
     },
     "type": {
       'init': function (command) {
-        translator(command['arg1']).bind('change', function () {
-          if ($(this).val() == command['arg2']) {
-            stepCompleted();
-          }
-        });
+        translator(command['arg1'])
+          .unbind('change.walkthrough')
+          .bind('change.walkthrough', function () {
+            if ($(this).val() == command['arg2']) {
+              stepCompleted();
+            }
+          });
       },
       'execute': function (command) {
         translator(command['arg1'])
@@ -136,9 +141,9 @@ Walkthrough = {};
     // something locks here, the whole app will freeze/deadlock.
     setTimeout(function () {
       if (commands[command['pureCommand']]) {
+        commands[command['pureCommand']]['init'](command);
         if (command['highlight'] && !force) {
           createJoyrideBoilerplate(translator(command['highlight']), command);
-          commands[command['pureCommand']]['init'](command);
         } else {
           commands[command['pureCommand']]['execute'](command);
         }
