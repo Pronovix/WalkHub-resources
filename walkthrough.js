@@ -15,8 +15,8 @@ Walkthrough = {};
     sendMessage('stepcompleted');
   }
 
-  function elementToHtml(element) {
-    return $('<div>').append(element.clone()).html();
+  function loaded() {
+    sendMessage('loaded');
   }
 
   function translator(command) {
@@ -146,5 +146,7 @@ Walkthrough = {};
       }
     }, 0);
   };
+
+  loaded();
 
 })(jQuery);
