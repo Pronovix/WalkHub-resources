@@ -98,7 +98,6 @@ Walkthrough = {};
          .bind('click.walkthrough', stepCompleted);
       },
       'execute': function (command) {
-        console.log(":(");
         var element = translator(command['arg1']);
         var raw = element.get(0);
         raw.click();
