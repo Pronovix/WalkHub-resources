@@ -51,6 +51,22 @@ Walkthrough = {};
     return $(command);
   }
 
+  function sanitizeValue(value) {
+    var types = {
+      'label': function (arg) {
+        return arg;
+      }
+    };
+
+    for (var prefix in types) {
+      if (value.indexOf(prefix + "=") === 0) {
+        return types[prefix](value.substr(prefix.length + 1));
+      }
+    }
+
+    return value;
+  }
+
   var console = {
     'log': function (obj) {
       sendMessage('log', obj);
@@ -112,7 +128,24 @@ Walkthrough = {};
       },
       'execute': function (command) {
         translator(command['arg1'])
-          .val(command['arg2']);
+          .val(command['arg2'])
+          .change();
+      }
+    },
+    "select": {
+      'init': function (command) {
+        translator(command['arg1'])
+          .unbind('change.walkthrough')
+          .bind('change.walkthrough', function () {
+            if ($(this).val() == sanitizeValue(command['arg2'])) {
+              stepCompleted();
+            }
+          });
+      },
+      'execute': function (command) {
+        translator(command['arg1'])
+          .val(sanitizeValue(command['arg2']))
+          .change();
       }
     }
   };
