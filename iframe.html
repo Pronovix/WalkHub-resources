@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>WalkHub</title>
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript">
+            var defaultOrigin = document.location.hash.substr(1);
+
+            window.addEventListener('message', function (event) {
+                var data = JSON.parse(event.data);
+                if (handlers[data.type]) {
+                    handlers[data.type](data, event.origin, event.source);
+                }
+            });
+
+            function post(message, origin, source) {
+                origin = origin || defaultOrigin;
+                source.postMessage(JSON.stringify(message), origin);
+            }
+
+            var handlers = {
+                request: function (data, origin, source) {
+                    var opts = {
+                        method: 'GET',
+                        success: function (respdata) {
+                            post({
+                                ticket: data.ticket,
+                                type: 'success',
+                                data: respdata
+                            }, origin, source);
+                        },
+                        error: function (xhr, status, err) {
+                            post({
+                                ticket: data.ticket,
+                                type: 'error',
+                                error: err,
+                                status: status
+                            }, origin, source);
+                        },
+                        dataType: 'json',
+                        accept: 'application/json'
+                    };
+
+                    if (data.data) {
+                        opts.data = data;
+                        opts.method = 'POST';
+                    }
+                    $.ajax(data.URL, opts);
+                }
+            };
+
+            $(function () {
+                post({type: 'ready'}, defaultOrigin, parent);
+            });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
