@@ -49,7 +49,9 @@
             };
 
             $(function () {
-                post({type: 'ready'}, defaultOrigin, parent);
+                if (defaultOrigin) {
+                    post({type: 'ready'}, defaultOrigin, parent);
+                }
             });
         </script>
     </head>

@@ -20,7 +20,23 @@ if (!window.Walkhub) {
       if (!iframe) {
         iframe = document.createElement('iframe');
         iframe.id = 'walkhub-communication';
-        iframe.src = iframe_url + '#' + document.location.origin;
+        if (/Safari/.test(navigator.userAgent)) {
+          var sessionForm = document.createElement('form');
+          sessionForm.id = 'walkhub-safari-sessionform';
+          sessionForm.enctype = 'application/x-www-form-urlencoded';
+          sessionForm.action = iframe_url + '#' + document.location.origin;
+          sessionForm.target = 'walkhub-communication';
+          sessionForm.method = 'POST';
+          document.body.appendChild(sessionForm);
+          function walkhubSubmitSessionForm() {
+            sessionForm.submit();
+          }
+          iframe.src = '';
+          setTimeout(walkhubSubmitSessionForm, 100);
+        }
+        else {
+          iframe.src = iframe_url + '#' + document.location.origin;
+        }
         document.body.appendChild(iframe);
       }
 
@@ -250,9 +266,16 @@ if (!window.Walkhub) {
   $(function () {
     // Read state
     window.server = new WalkhubServer(Walkhub.iframe);
-    setTimeout(function () {
-      window.server.send('walkhub-state/all', logParams, logParams);
-    }, 1000);
+    function start() {
+      if (server.isReady()) {
+        server.send('walkhub-state/all', logParams, logParams);
+      }
+      else {
+        setTimeout(start, 500);
+      }
+    }
+
+    start();
   });
 
   /**
