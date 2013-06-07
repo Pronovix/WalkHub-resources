@@ -4,47 +4,21 @@ if (!window.Walkhub) {
 
 (function ($) {
 
-  if (!Walkhub.URL) {
-    Walkhub.URL = "http://lolcathost/~yorirou/walkthrough";
-  }
-  if (!Walkhub.iframe) {
-    Walkhub.iframe = 'http://lolcathost/~yorirou/walkthroughresources/iframe.html';
-  }
-
-  function WalkhubServer(iframe_url) {
+  function WalkhubServer(frame, defaultOrigin) {
     var tickets = {};
-    var ready = false;
+    var origin = defaultOrigin;
+    var baseURL;
 
-    function ensure() {
-      var iframe = document.getElementById('walkhub-communication');
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.id = 'walkhub-communication';
-        if (/Safari/.test(navigator.userAgent)) {
-          var sessionForm = document.createElement('form');
-          sessionForm.id = 'walkhub-safari-sessionform';
-          sessionForm.enctype = 'application/x-www-form-urlencoded';
-          sessionForm.action = iframe_url + '#' + document.location.origin;
-          sessionForm.target = 'walkhub-communication';
-          sessionForm.method = 'POST';
-          document.body.appendChild(sessionForm);
-          function walkhubSubmitSessionForm() {
-            sessionForm.submit();
-          }
-          iframe.src = '';
-          setTimeout(walkhubSubmitSessionForm, 100);
-        }
-        else {
-          iframe.src = iframe_url + '#' + document.location.origin;
-        }
-        document.body.appendChild(iframe);
-      }
+    var self = this;
 
-      return iframe;
+    function post(data) {
+      frame.postMessage(JSON.stringify(data), origin);
     }
 
+    this.stateChanged = null;
+
     this.send = function (endpoint, data, success, error) {
-      if (!ready) {
+      if (!origin) {
         return false;
       }
 
@@ -54,23 +28,30 @@ if (!window.Walkhub) {
         error: error
       };
 
-      ensure().contentWindow.postMessage(JSON.stringify({
+      post({
         type: 'request',
         ticket: ticket,
-        URL: Walkhub.URL + '/api/v2/' + endpoint,
+        URL: baseURL + 'api/v2/' + endpoint,
         data: data
-      }), 'http://lolcathost');
+      });
 
       return true;
     };
 
-    this.isReady = function () {
-      return ready;
+    this.log = function (data) {
+      post({
+        type: 'log',
+        log: data
+      });
     };
 
     var handlers = {
-      ready: function () {
-        ready = true;
+      connect_ok: function (data) {
+        origin = data.origin;
+        baseURL = data.baseurl;
+        post({
+          type: 'getState'
+        });
       },
       success: function (data) {
         if (tickets[data.ticket]) {
@@ -83,18 +64,137 @@ if (!window.Walkhub) {
           tickets[data.ticket].error(data.status, data.error);
           delete tickets[data.ticket];
         }
+      },
+      state: function (data) {
+        if (self.stateChanged) {
+          self.stateChanged(data.state);
+        }
       }
     };
 
     window.addEventListener('message', function (event) {
       var data = JSON.parse(event.data);
-      console.log(data);
-      if (handlers[data.type]) {
-          handlers[data.type](data, event.origin);
+      if (data && data.type && handlers[data.type]) {
+        console.log(data);
+        handlers[data.type](data, event.origin);
       }
     });
 
-    ensure();
+    this.updateState = function (state) {
+      post({type: 'setState', state: state});
+    };
+
+    this.start = function () {
+      if (frame && origin) {
+        post({type: 'connect', origin: window.location.origin});
+      }
+    };
+  }
+
+  function WalkhubWalkthrough(server) {
+    var state = {
+      walkthrough: null,
+      step: null,
+      completed: false,
+      stepIndex: 0
+    };
+
+    var walkthrough = null;
+    var step = null;
+
+    var self = this;
+
+    this.initStep = function () {
+      server.log('Step initialization started.');
+      state.completed = false;
+      server.updateState(state);
+      Walkhub.execute(step, false, function () {
+        state.completed = true;
+        server.updateState(state);
+        server.log('Step completed');
+      });
+      if (commands[step.pureCommand]['auto']) {
+        server.log('Automatically executing step.');
+        self.nextStep();
+      }
+    };
+
+    this.finish = function () {
+      state.walkthrough = null;
+      state.step = null;
+      state.completed = false;
+      state.stepIndex = 0;
+      walkthrough = null;
+      step = null;
+      server.updateState(state);
+    };
+
+    this.nextStep = function () {
+      if (!state.completed && step) {
+        server.log('Executing incomplete step.');
+        Walkhub.execute(step, true);
+      }
+
+      if (walkthrough.steps.length == state.stepIndex) { // Last step
+        server.log('Last step');
+        self.finish();
+        return;
+      }
+
+      server.log('Loading next step');
+      state.step = walkthrough.steps[state.stepIndex];
+      state.stepIndex++;
+      server.updateState(state);
+      refreshStep(function () {
+        server.log('Next step loaded, initalizing.');
+        self.initStep();
+      });
+    };
+
+    function refreshWalkthrough(callback) {
+      walkthrough = null;
+      server.updateState(state);
+      step = null;
+      server.send('walkhub-walkthrough/' + state.walkthrough, null, function (data) {
+        walkthrough = data;
+        server.log(['Walkthrough loaded', walkthrough]);
+        if (callback) {
+          callback(data);
+        }
+      }, logParams);
+    }
+
+    function refreshStep(callback) {
+      step = null;
+      server.send('walkhub-step/' + state.step, null, function (data) {
+        step = data;
+        server.log(['Step loaded', step]);
+        if (callback) {
+          callback(data);
+        }
+      }, logParams);
+    }
+
+    server.stateChanged = function (_state) {
+      state = _state;
+      server.log(['New state', state]);
+      if (state.walkthrough) {
+        refreshWalkthrough(function () {
+          if (state.step) {
+            server.log('Loading step');
+            refreshStep(function () {
+              self.initStep();
+            });
+          }
+          else {
+            server.log('Empty step');
+            self.nextStep();
+          }
+        });
+      }
+    };
+
+    server.start();
   }
 
   // JavaScript -> Cocoa bridging
@@ -132,7 +232,7 @@ if (!window.Walkhub) {
         return $(result);
       },
       'link': function (arg) {
-        arg = arg.replace('(', '\(').replace(')', '\)');
+        arg = arg.replace('(', '\\(').replace(')', '\\)');
         return $('a:contains("' + arg + '")');
       },
       'ui': function (arg) {
@@ -217,7 +317,7 @@ if (!window.Walkhub) {
       .unbind('click')
       .bind('click',function (event) {
         event.preventDefault();
-        sendMessage('next', '');
+        walkthrough.nextStep();
       })
       .html('Next');
 
@@ -225,57 +325,69 @@ if (!window.Walkhub) {
 
   // Dispatch command
   var commands = {
-    "click": {
-      'init': function (command) {
+    click: {
+      init: function (command, stepCompletionCallback) {
         translator(command['arg1'])
           .unbind('click.walkthough')
-          .bind('click.walkhub', stepCompleted);
+          .bind('click.walkhub', stepCompletionCallback || stepCompleted);
       },
-      'execute': function (command) {
+      execute: function (command) {
         var element = translator(command['arg1']);
         var raw = element.get(0);
         raw.click();
       }
     },
-    "type": {
-      'init': function (command) {
+    type: {
+      init: function (command, stepCompletionCallback) {
         translator(command['arg1'])
           .unbind('change.walkhub')
-          .bind('change.walkhub', stepCompleted);
+          .bind('change.walkhub', stepCompletionCallback || stepCompleted);
       },
-      'execute': function (command) {
+      execute: function (command) {
         translator(command['arg1'])
           .val(command['arg2'])
           .change();
       }
     },
-    "select": {
-      'init': function (command) {
+    select: {
+      init: function (command, stepCompletionCallback) {
         translator(command['arg1'])
           .unbind('change.walkhub')
-          .bind('change.walkhub', stepCompleted);
+          .bind('change.walkhub', stepCompletionCallback || stepCompleted);
       },
-      'execute': function (command) {
+      execute: function (command) {
         translator(command['arg1'])
           .val(sanitizeValue(command['arg2']))
           .change();
       }
+    },
+    open: {
+      init: function (command, stepCompletionCallback) {
+        //(stepCompletionCallback || stepCompleted)();
+      },
+      execute: function (command) {
+        window.location = command['arg1'];
+      },
+      // This means that this step will be executed automatically.
+      auto: true
     }
   };
 
-  $(function () {
-    // Read state
-    window.server = new WalkhubServer(Walkhub.iframe);
-    function start() {
-      if (server.isReady()) {
-        server.send('walkhub-state/all', logParams, logParams);
-      }
-      else {
-        setTimeout(start, 500);
-      }
+//  var server = null;
+//  var walkthrough = null;
+
+  function negotiateWalkhubOrigin() {
+    if (Walkhub.Origin) {
+      return Walkhub.Origin();
     }
 
-    start();
+    return window.location.hash.substr(1);
+  }
+
+  $(function () {
+    // Read state
+    window.server = new WalkhubServer(window.opener, negotiateWalkhubOrigin());
+    window.walkthrough = new WalkhubWalkthrough(window.server);
   });
 
   /**
@@ -292,14 +404,15 @@ if (!window.Walkhub) {
    *    string highlight
    *    bool andWait
    * @param force
+   * @param stepCompletionCallback
    */
-  Walkhub.execute = function (command, force) {
+  Walkhub.execute = function (command, force, stepCompletionCallback) {
     // This is very important. This script runs synchronously, which means that if
     // something locks here, the whole app will freeze/deadlock.
     setTimeout(function () {
       if (commands[command['pureCommand']]) {
-        commands[command['pureCommand']]['init'](command);
-        if (command['highlight'] && !force) {
+        commands[command['pureCommand']]['init'](command, stepCompletionCallback);
+        if ((command['highlight'] || commands[command['pureCommand']]['auto']) && !force) {
           createJoyrideBoilerplate(translator(command['highlight']), command, false);
         }
         else {
