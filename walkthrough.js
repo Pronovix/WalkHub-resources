@@ -211,31 +211,38 @@ if (!window.Walkhub) {
   }
 
   function translator(command) {
+    if (!command) {
+      return null;
+    }
+
     var locators = {
-      'identifier': function (arg) {
+      identifier: function (arg) {
         var jq = locators.id(arg);
         if (jq.length == 0) {
           jq = locators.name(arg);
         }
         return jq;
       },
-      'id': function (arg) {
+      id: function (arg) {
         return $('#' + arg);
       },
-      'name': function (arg) {
+      name: function (arg) {
         return $('[name=' + arg + ']');
       },
-      'dom': function (arg) {
+      dom: function (arg) {
       },
-      'xpath': function (arg) {
+      xpath: function (arg) {
         var result = document.evaluate(arg, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         return $(result);
       },
-      'link': function (arg) {
+      link: function (arg) {
         arg = arg.replace('(', '\\(').replace(')', '\\)');
         return $('a:contains("' + arg + '")');
       },
-      'ui': function (arg) {
+      css: function (arg) {
+        return $(arg);
+      },
+      ui: function (arg) {
       }
     };
 
