@@ -4,15 +4,85 @@ if (!window.Walkhub) {
 
 (function ($) {
 
-  function WalkhubServer(frame, defaultOrigin) {
+  function WalkhubProxyServer(frame, defaultOrigin) {
+    var tickets = {};
+    var origin = defaultOrigin;
+    var serverKey;
+
+    function post(data, customFrame) {
+      if (customFrame) {
+        customFrame.source.postMessage(JSON.stringify(data), customFrame.origin);
+      } else {
+        frame.postMessage(JSON.stringify(data), origin);
+      }
+    }
+
+    function log(data) {
+      if (serverKey) {
+        post({type: 'log', log: data, key: serverKey});
+      }
+    }
+
+    window.addEventListener('message', function (event) {
+      var data = JSON.parse(event.data);
+      if (serverKey) {
+        if (frame == event.source) {
+          if (data.proxy_key && tickets[data.proxy_key]) {
+            post(data, tickets[data.proxy_key]);
+            log(['Proxying data to the client', data]);
+          }
+        } else {
+          if (!data.proxy_key) { // add new client
+            data.proxy_key = Math.random().toString();
+            tickets[data.proxy_key] = {
+              source: event.source,
+              origin: event.origin
+            };
+            post({
+              type: 'setProxy',
+              proxy_key: data.proxy_key
+            }, tickets[data.proxy_key]);
+            log(['Client connected', data.proxy_key]);
+          }
+          post(data);
+          log(['Proxying data to the server', data]);
+        }
+      } else {
+        if (data && data.type && data.type == 'connect_ok') {
+          origin = data.origin;
+          serverKey = data.key;
+          log('Proxy connected');
+        }
+      }
+    });
+
+    post({
+      type: 'connect',
+      origin: window.location.origin,
+      tag: 'proxy'
+    });
+
+    log('Proxy starting.');
+  }
+
+  function WalkhubClient(frame, defaultOrigin) {
     var tickets = {};
     var origin = defaultOrigin;
     var baseURL;
 
+    var serverKey;
+    var proxyKey;
+
     var self = this;
 
     function post(data) {
+      data.key = data.key || serverKey;
+      data.tag = data.tag || 'client';
+      if (proxyKey) {
+        data.proxy_key = proxyKey;
+      }
       frame.postMessage(JSON.stringify(data), origin);
+      console.log(['Client data', data]);
     }
 
     this.stateChanged = null;
@@ -47,11 +117,16 @@ if (!window.Walkhub) {
 
     var handlers = {
       connect_ok: function (data) {
-        origin = data.origin;
-        baseURL = data.baseurl;
-        post({
-          type: 'getState'
-        });
+        if (!serverKey) {
+          if (!proxyKey) {
+            origin = data.origin;
+          }
+          baseURL = data.baseurl;
+          serverKey = data.key;
+          post({
+            type: 'getState'
+          });
+        }
       },
       success: function (data) {
         if (tickets[data.ticket]) {
@@ -69,14 +144,18 @@ if (!window.Walkhub) {
         if (self.stateChanged) {
           self.stateChanged(data.state);
         }
+      },
+      setProxy: function (data) {
+        proxyKey = data.proxy_key;
       }
     };
 
     window.addEventListener('message', function (event) {
       var data = JSON.parse(event.data);
-      if (data && data.type && handlers[data.type]) {
-        console.log(data);
-        handlers[data.type](data, event.origin);
+      var handler = data && data.type && handlers[data.type];
+      if (handler) {
+        console.log(event);
+        handler(data, event.source);
       }
     });
 
@@ -369,9 +448,7 @@ if (!window.Walkhub) {
       }
     },
     open: {
-      init: function (command, stepCompletionCallback) {
-        //(stepCompletionCallback || stepCompleted)();
-      },
+      init: function (command, stepCompletionCallback) {},
       execute: function (command) {
         window.location = command['arg1'];
       },
@@ -380,8 +457,11 @@ if (!window.Walkhub) {
     }
   };
 
-//  var server = null;
+//  var client = null;
 //  var walkthrough = null;
+  window.client = null;
+  window.walkthrough = null;
+  window.proxy = null;
 
   function negotiateWalkhubOrigin() {
     if (Walkhub.Origin) {
@@ -392,9 +472,16 @@ if (!window.Walkhub) {
   }
 
   $(function () {
-    // Read state
-    window.server = new WalkhubServer(window.opener, negotiateWalkhubOrigin());
-    window.walkthrough = new WalkhubWalkthrough(window.server);
+    if (window.opener) {
+      var origin = negotiateWalkhubOrigin();
+      window.client = new WalkhubClient(window.opener, origin);
+      window.proxy = new WalkhubProxyServer(window.opener, origin);
+    } else if (window.parent != window && window.parent) {
+      window.client = new WalkhubClient(window.parent, window.location.origin);
+    }
+    if (client) {
+      window.walkthrough = new WalkhubWalkthrough(client);
+    }
   });
 
   /**
