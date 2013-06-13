@@ -1,6 +1,21 @@
+prodc = java -jar closure-compiler.jar
+debugc = cat
+
+jquery = jquery.js jquery.cookie.js
+modernizr = modernizr.mq.js
+joyride = jquery.joyride.js
+app = walkthrough.js
+
+allfiles = $(jquery) $(modernizr) $(joyride) $(app)
+drupal = $(modernizr) $(joyride) $(app)
+
 all:
-	java -jar closure-compiler.jar jquery.js jquery.cookie.js modernizr.mq.js jquery.joyride.js walkthrough.js > compiled.js
-	java -jar closure-compiler.jar modernizr.mq.js jquery.joyride.js walkthrough.js > compiled-drupal.js
+	$(prodc) $(allfiles) > compiled.js
+	$(prodc) $(drupal) > compiled-drupal.js
+
+debug:
+	$(debugc) $(allfiles) > compiled.js
+	$(debugc) $(drupal) > compiled-drupal.js
 
 clean:
 	rm compiled*.js
