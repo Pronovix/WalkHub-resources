@@ -384,28 +384,24 @@ if (!window.Walkhub) {
     }
 
     previousJoyride = $('<ol />')
-      .append($('<li />').html('<p>'.concat(command['description'], '</p>')).attr('data-class', modal ? '' : uniq))
+      .append($('<li />').html('<p>' + (command['description'] || '') + '</p>').attr('data-class', modal ? '' : uniq))
       .hide()
       .appendTo($('body'))
       .joyride({
-        'nextButton': true,
-        'spareButton1': false
+        nextButton: true,
+        cookieMonster: false,
+        autoStart: true,
+        preStepCallback: function () {
+          $('div.joyride-tip-guide').css('z-index', 2147483647);
+          $('.joyride-next-tip')
+            .unbind('click')
+            .bind('click', function (event) {
+              event.preventDefault();
+              walkthrough.nextStep();
+            })
+            .html('Next');
+        }
       });
-    $('.joyride-spare-2')
-      .unbind('click')
-      .bind('click',function (event) {
-        event.preventDefault();
-        sendMessage('edit', '');
-      })
-      .html('Edit');
-
-    $('.joyride-next-tip')
-      .unbind('click')
-      .bind('click',function (event) {
-        event.preventDefault();
-        walkthrough.nextStep();
-      })
-      .html('Next');
 
   }
 
