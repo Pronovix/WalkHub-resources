@@ -4,6 +4,8 @@ if (!window.Walkhub) {
 
 (function ($) {
 
+  const MAXIMUM_ZINDEX = 2147483647;
+
   function WalkhubProxyServer(frame, defaultOrigin) {
     var tickets = {};
     var origin = defaultOrigin;
@@ -175,7 +177,8 @@ if (!window.Walkhub) {
       walkthrough: null,
       step: null,
       completed: false,
-      stepIndex: 0
+      stepIndex: 0,
+      tokens: {}
     };
 
     var walkthrough = null;
@@ -246,12 +249,25 @@ if (!window.Walkhub) {
     function refreshStep(callback) {
       step = null;
       server.send('walkhub-step/' + state.step, null, function (data) {
-        step = data;
+        step = processStep(data);
         server.log(['Step loaded', step]);
         if (callback) {
           callback(data);
         }
       }, logParams);
+    }
+
+    function processStep(step) {
+      var props = ['arg1', 'arg2', 'highlight'];
+      for (var token in state.tokens) {
+        for (var prop in props) {
+          prop = props[prop];
+          if (step[prop]) {
+            step[prop] = step[prop].replace('$' + token + '$', state.tokens[token]);
+          }
+        }
+      }
+      return step;
     }
 
     server.stateChanged = function (_state) {
@@ -392,7 +408,7 @@ if (!window.Walkhub) {
         cookieMonster: false,
         autoStart: true,
         preStepCallback: function () {
-          $('div.joyride-tip-guide').css('z-index', 2147483647);
+          $('div.joyride-tip-guide').css('z-index', MAXIMUM_ZINDEX);
           $('.joyride-next-tip')
             .unbind('click')
             .bind('click', function (event) {
