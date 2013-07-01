@@ -2,3 +2,7 @@
 a.joyride-close-tip {
   display: none;
 }
+
+.walkthrough-in-progress button.ui-dialog-titlebar-close {
+  display: none;
+}
