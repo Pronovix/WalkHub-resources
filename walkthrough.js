@@ -4,7 +4,8 @@ if (!window.Walkhub) {
 
 (function ($) {
 
-  const MAXIMUM_ZINDEX = 2147483647;
+  var MAXIMUM_ZINDEX = 2147483647;
+  var LINK_CHECK_TIMEOUT = 500;
 
   function WalkhubProxyServer(frame, defaultOrigin) {
     var tickets = {};
@@ -165,10 +166,26 @@ if (!window.Walkhub) {
       post({type: 'setState', state: state});
     };
 
+    this.finish = function () {
+      post({type: 'finished'});
+    };
+
+    function checkLink() {
+      if (frame.closed) {
+        var cancel = function () { console.log('Cancel walkthrough') };
+        Walkhub.showExitDialog('Walkhub window is closed.', {
+          'Cancel walkthrough': cancel
+        }, cancel);
+      } else {
+        setTimeout(checkLink, LINK_CHECK_TIMEOUT);
+      }
+    }
+
     this.start = function () {
       if (frame && origin) {
-        post({type: 'connect', origin: window.location.origin});
+        post({type: 'connect', origin: window.location.origin, url: window.location.href});
       }
+      checkLink();
     };
   }
 
@@ -209,6 +226,7 @@ if (!window.Walkhub) {
       walkthrough = null;
       step = null;
       server.updateState(state);
+      server.finish();
     };
 
     this.nextStep = function () {
@@ -258,7 +276,7 @@ if (!window.Walkhub) {
     }
 
     function processStep(step) {
-      var props = ['arg1', 'arg2', 'highlight'];
+      var props = ['arg1', 'arg2', 'highlight', 'description'];
       for (var token in state.tokens) {
         for (var prop in props) {
           prop = props[prop];
@@ -386,7 +404,7 @@ if (!window.Walkhub) {
 
   var previousJoyride = null;
 
-  function createJoyrideBoilerplate(element, command, modal) {
+  function createJoyrideBoilerplate(element, command, modal, extra_opts, extra_setup) {
 
     var uniq = uniqueID();
 
@@ -399,25 +417,34 @@ if (!window.Walkhub) {
       element.addClass(uniq);
     }
 
+    var opts = {
+      nextButton: true,
+      cookieMonster: false,
+      autoStart: true,
+      preStepCallback: function () {
+        $('div.joyride-tip-guide').css('z-index', MAXIMUM_ZINDEX);
+        $('.joyride-next-tip')
+          .unbind('click')
+          .bind('click', function (event) {
+            event.preventDefault();
+            walkthrough.nextStep();
+          })
+          .html('Next');
+        if (extra_setup) {
+          extra_setup();
+        }
+      }
+    };
+
+    if (extra_opts) {
+      opts = $.extend(opts, extra_opts);
+    }
+
     previousJoyride = $('<ol />')
       .append($('<li />').html('<p>' + (command['description'] || '') + '</p>').attr('data-class', modal ? '' : uniq))
       .hide()
       .appendTo($('body'))
-      .joyride({
-        nextButton: true,
-        cookieMonster: false,
-        autoStart: true,
-        preStepCallback: function () {
-          $('div.joyride-tip-guide').css('z-index', MAXIMUM_ZINDEX);
-          $('.joyride-next-tip')
-            .unbind('click')
-            .bind('click', function (event) {
-              event.preventDefault();
-              walkthrough.nextStep();
-            })
-            .html('Next');
-        }
-      });
+      .joyride(opts);
 
   }
 
@@ -495,6 +522,31 @@ if (!window.Walkhub) {
       window.walkthrough = new WalkhubWalkthrough(client);
     }
   });
+
+  Walkhub.showExitDialog = function (message, buttons, cancel) {
+    var opts = {
+      nextButton: false
+    };
+    if (cancel) {
+      opts.postRideCallback = cancel;
+    }
+    createJoyrideBoilerplate(null, {description: message}, true, opts, function () {
+      for (var text in buttons) {
+        (function () {
+          var buttonfunc = buttons[text];
+          var button = $('<a />')
+            .attr('href', '#')
+            .addClass('joyride-next-tip')
+            .html(text)
+            .click(function (event) {
+              event.preventDefault();
+                buttonfunc();
+            });
+          $('.joyride-content-wrapper').append(button);
+        })();
+      }
+    });
+  };
 
   /**
    * Executes a command
