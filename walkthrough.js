@@ -11,6 +11,15 @@ if (!window.Walkhub) {
     var tickets = {};
     var origin = defaultOrigin;
     var serverKey;
+    var paused = false;
+
+    this.pause = function () {
+      paused = true;
+    };
+
+    this.resume = function () {
+      paused = false;
+    };
 
     function post(data, customFrame) {
       if (customFrame) {
@@ -27,7 +36,15 @@ if (!window.Walkhub) {
     }
 
     window.addEventListener('message', function (event) {
+      if (paused) {
+        return;
+      }
       var data = JSON.parse(event.data);
+      if (data && data.type && data.type == 'ping') {
+        log(['Ping received, sending pong', event.origin]);
+        event.source.postMessage(JSON.stringify({type: 'pong', tag: 'proxy'}), event.origin);
+        return;
+      }
       if (serverKey) {
         if (frame == event.source) {
           if (data.proxy_key && tickets[data.proxy_key]) {
@@ -50,12 +67,10 @@ if (!window.Walkhub) {
           post(data);
           log(['Proxying data to the server', data]);
         }
-      } else {
-        if (data && data.type && data.type == 'connect_ok') {
+      } else if (data && data.type && data.type == 'connect_ok') {
           origin = data.origin;
           serverKey = data.key;
           log('Proxy connected');
-        }
       }
     });
 
@@ -511,15 +526,29 @@ if (!window.Walkhub) {
   }
 
   $(function () {
-    if (window.opener) {
-      var origin = negotiateWalkhubOrigin();
-      window.client = new WalkhubClient(window.opener, origin);
-      window.proxy = new WalkhubProxyServer(window.opener, origin);
-    } else if (window.parent != window && window.parent) {
-      window.client = new WalkhubClient(window.parent, window.location.origin);
+    var origin = negotiateWalkhubOrigin();
+    function ping(source, origin) {
+      var message = JSON.stringify({type: 'ping', origin: window.location.origin});
+      source.postMessage(message, origin);
     }
-    if (client) {
-      window.walkthrough = new WalkhubWalkthrough(client);
+    window.addEventListener('message', function (event) {
+      if (window.client) {
+        return;
+      }
+      var data = JSON.parse(event.data);
+      if (data.type === 'pong') {
+        window.client = new WalkhubClient(event.source, event.origin);
+        window.proxy = new WalkhubProxyServer(event.source, event.origin);
+        window.walkthrough = new WalkhubWalkthrough(window.client);
+        window.removeEventListener('message', this);
+      }
+    });
+    if (window.opener) {
+      ping(window.opener, origin);
+    }
+    if (window.parent && window.parent != window) {
+      ping(window.parent, window.location.origin);
+      ping(window.parent, origin);
     }
   });
 
