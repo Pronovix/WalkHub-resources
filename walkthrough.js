@@ -266,6 +266,17 @@ if (!window.Walkhub) {
       });
     };
 
+    this.updateCurrentStep = function (step, callback) {
+      console.log(['Updating step', step]);
+      server.send('walkhub-step/' + state.step, step, function (data) {
+        console.log(['Updated data', data]);
+        step = data;
+        callback(data);
+      }, function () {
+        alert('Updating step failed');
+      });
+    };
+
     function refreshWalkthrough(callback) {
       walkthrough = null;
       server.updateState(state);
@@ -420,7 +431,6 @@ if (!window.Walkhub) {
   var previousJoyride = null;
 
   function createJoyrideBoilerplate(element, command, modal, extra_opts, extra_setup) {
-
     var uniq = uniqueID();
 
     if (previousJoyride) {
@@ -431,6 +441,11 @@ if (!window.Walkhub) {
     if (element) {
       element.addClass(uniq);
     }
+
+    var stepText = $('<p><span class="step-title-UNIQ">TITLE</span><br /><span class="step-description-UNIQ">DESCRIPTION</span></p>'
+                       .replace('TITLE', command['title'] || '')
+                       .replace('DESCRIPTION', command['description'] || '')
+                       .replace(/UNIQ/g, uniq));
 
     var opts = {
       nextButton: true,
@@ -445,6 +460,23 @@ if (!window.Walkhub) {
             walkthrough.nextStep();
           })
           .html('Next');
+        if (command.canEdit) {
+          $('<a />')
+            .attr('href', '#')
+            .addClass('joyride-normal-tip')
+            .html('Edit')
+            .click(function (event) {
+               event.preventDefault();
+               openStepEditDialog(command, function () {
+                 $('.joyride-next-tip, .joyride-normal-tip').show();
+               }, function (step) {
+                 $('span.step-title-' + uniq).html(step.title);
+                 $('span.step-description-' + uniq).html(step.description);
+               });
+               $('.joyride-next-tip, .joyride-normal-tip').hide();
+             })
+            .appendTo($('.joyride-content-wrapper'));
+        }
         if (extra_setup) {
           extra_setup();
         }
@@ -456,11 +488,53 @@ if (!window.Walkhub) {
     }
 
     previousJoyride = $('<ol />')
-      .append($('<li />').html('<p>' + (command['description'] || '') + '</p>').attr('data-class', modal ? '' : uniq))
+      .append($('<li />').append(stepText).attr('data-class', modal ? '' : uniq))
       .hide()
       .appendTo($('body'))
       .joyride(opts);
+  }
 
+  function openStepEditDialog(step, submit, success) {
+    var form = $('<form><fieldset></fieldset></form>');
+    var fieldset = $('fieldset', form);
+
+    $('<label />')
+      .attr('for', 'title')
+      .html('Title')
+      .appendTo(fieldset);
+    $('<input />')
+      .attr('type', 'textfield')
+      .attr('name', 'title')
+      .attr('id', 'title')
+      .val(step.titleRaw)
+      .appendTo(fieldset);
+
+    $('<label />')
+      .attr('for', 'description')
+      .html('Description')
+      .appendTo(fieldset);
+
+    $('<textarea />')
+      .val(step.descriptionRaw)
+      .attr('name', 'description')
+      .attr('id', 'description')
+      .appendTo(fieldset);
+
+    $('<input />')
+      .attr('type', 'submit')
+      .val('Save')
+      .appendTo(fieldset);
+
+    form.submit(function (event) {
+      event.preventDefault();
+      step.titleRaw = $('input#title', form).val();
+      step.descriptionRaw = $('textarea#description', form).val();
+      submit();
+      form.remove();
+      window.walkthrough.updateCurrentStep(step, success);
+    });
+
+    form.appendTo($('.joyride-content-wrapper'));
   }
 
   // Dispatch command
