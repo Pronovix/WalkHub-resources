@@ -210,7 +210,7 @@ if (!window.Walkhub) {
       step: null,
       completed: false,
       stepIndex: 0,
-      tokens: {}
+      parameters: {}
     };
 
     var walkthrough = null;
@@ -303,11 +303,11 @@ if (!window.Walkhub) {
 
     function processStep(step) {
       var props = ['arg1', 'arg2', 'highlight', 'description'];
-      for (var token in state.tokens) {
+      for (var parameter in state.parameters) {
         for (var prop in props) {
           prop = props[prop];
           if (step[prop]) {
-            step[prop] = step[prop].replace('$' + token + '$', state.tokens[token]);
+            step[prop] = step[prop].replace('[' + parameter + ']', state.parameters[parameter]);
           }
         }
       }
