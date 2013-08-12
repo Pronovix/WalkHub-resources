@@ -585,6 +585,9 @@ if (!window.Walkhub) {
     }
   };
 
+  // Aliases
+  commands.sendKeys = commands.type;
+
 //  var client = null;
 //  var walkthrough = null;
   window.client = null;
