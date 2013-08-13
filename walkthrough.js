@@ -349,8 +349,8 @@ if (!window.Walkhub) {
     sendMessage('stepcompleted');
   }
 
-  function translator(command) {
-    if (!command) {
+  function translator(locator) {
+    if (!locator) {
       return null;
     }
 
@@ -385,13 +385,22 @@ if (!window.Walkhub) {
       }
     };
 
+    var jqobj = null;
+
     for (var prefix in locators) {
-      if (command.indexOf(prefix + "=") === 0) {
-        return locators[prefix](command.substr(prefix.length + 1));
+      if (locator.indexOf(prefix + "=") === 0) {
+        jqobj = locators[prefix](locator.substr(prefix.length + 1));
+        break;
       }
     }
 
-    return $(command);
+    jqobj = jqobj || $(locator);
+
+    if (jqobj.length == 0) {
+      alert("Selenium locator did not fonud: " + locator);
+    }
+
+    return jqobj;
   }
 
   function sanitizeValue(value) {
@@ -586,7 +595,7 @@ if (!window.Walkhub) {
   };
 
   // Aliases
-  commands.sendKeys = commands.type;
+  commands['sendKeys'] = commands.type;
 
 //  var client = null;
 //  var walkthrough = null;
@@ -682,6 +691,8 @@ if (!window.Walkhub) {
         else {
           commands[command['pureCommand']]['execute'](command);
         }
+      } else {
+        alert("Unsupported selenium command: " + command['pureCommand']);
       }
     }, 0);
   };
