@@ -338,11 +338,19 @@ if (!window.Walkhub) {
 
   // JavaScript -> Cocoa bridging
 
+  var cocoaBridgeEnabled = false;
+
+  window.Walkhub.enableCocoaBridge = function () {
+    cocoaBridgeEnabled = true;
+  };
+
   function sendMessage(type, message) {
-    $('<iframe />')
-      .attr('src', 'walkhub-' + type + '://localhost/?' + encodeURIComponent(message))
-      .hide()
-      .appendTo($('body'));
+    if (cocoaBridgeEnabled) {
+      $('<iframe />')
+        .attr('src', 'walkhub-' + type + '://localhost/?' + encodeURIComponent(message))
+        .hide()
+        .appendTo($('body'));
+    }
   }
 
   function stepCompleted() {
