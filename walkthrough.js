@@ -227,7 +227,7 @@ if (!window.Walkhub) {
         server.updateState(state);
         server.log('Step completed');
       });
-      if (commands[step.pureCommand]['auto']) {
+      if (commands[step['pureCommand']]['auto']) {
         server.log('Automatically executing step.');
         self.nextStep();
       }
@@ -559,7 +559,7 @@ if (!window.Walkhub) {
     click: {
       init: function (command, stepCompletionCallback) {
         translator(command['arg1'])
-          .unbind('click.walkthough')
+          .unbind('click.walkhub')
           .bind('click.walkhub', stepCompletionCallback || stepCompleted);
       },
       execute: function (command) {
@@ -693,19 +693,22 @@ if (!window.Walkhub) {
     setTimeout(function () {
       if (commands[command['pureCommand']]) {
         commands[command['pureCommand']]['init'](command, stepCompletionCallback);
-        if ((command['highlight'] || commands[command['pureCommand']]['auto']) && !force) {
+
+        if (force && !commands[command['pureCommand']]['auto']) {
+          commands[command['pureCommand']].execute(command);
+        } else if (command['highlight']) {
           createJoyrideBoilerplate(translator(command['highlight']), command, false);
+        } else {
+          Walkhub.modal(command);
         }
-        else {
-          commands[command['pureCommand']]['execute'](command);
-        }
+
       } else {
         alert("Unsupported selenium command: " + command['pureCommand']);
       }
     }, 0);
   };
 
-  Walkhub.modal = function (command, force) {
+  Walkhub.modal = function (command) {
     // This is very important. This script runs synchronously, which means that if
     // something locks here, the whole app will freeze/deadlock.
     setTimeout(function () {
