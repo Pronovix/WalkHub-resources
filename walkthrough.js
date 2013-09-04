@@ -460,7 +460,7 @@ if (!window.Walkhub) {
     }
 
     var stepText = $('<p><span class="step-title-UNIQ">TITLE</span><br /><span class="step-description-UNIQ">DESCRIPTION</span></p>'
-                       .replace('TITLE', command['title'] || '')
+                       .replace('TITLE', command['showTitle'] ? (command['title'] || '') : '')
                        .replace('DESCRIPTION', command['description'] || '')
                        .replace(/UNIQ/g, uniq));
 
