@@ -694,7 +694,7 @@ if (!window.Walkhub) {
       if (commands[command['pureCommand']]) {
         commands[command['pureCommand']]['init'](command, stepCompletionCallback);
 
-        if (force && !commands[command['pureCommand']]['auto']) {
+        if (force || commands[command['pureCommand']]['auto']) {
           commands[command['pureCommand']].execute(command);
         } else if (command['highlight']) {
           createJoyrideBoilerplate(translator(command['highlight']), command, false);
