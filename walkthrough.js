@@ -404,9 +404,9 @@ if (!window.Walkhub) {
 
     jqobj = jqobj || $(locator);
 
-    if (jqobj.length == 0) {
-      alert("Selenium locator did not fonud: " + locator);
-    }
+//    if (jqobj.length == 0) {
+//      alert("Selenium locator did not fonud: " + locator);
+//    }
 
     return jqobj;
   }
@@ -703,7 +703,7 @@ if (!window.Walkhub) {
         }
 
       } else {
-        alert("Unsupported selenium command: " + command['pureCommand']);
+//        alert("Unsupported selenium command: " + command['pureCommand']);
       }
     }, 0);
   };
