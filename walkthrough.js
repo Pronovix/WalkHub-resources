@@ -363,7 +363,7 @@ if (!window.Walkhub) {
     sendMessage('stepcompleted');
   }
 
-  function translator(locator) {
+  function translator(locator, verbose) {
     if (!locator) {
       return null;
     }
@@ -410,8 +410,9 @@ if (!window.Walkhub) {
 
     jqobj = jqobj || $(locator);
 
-    if (jqobj.length == 0 && !unloading) {
+    if (verbose && jqobj.length == 0 && !unloading) {
       alert("Selenium locator did not found: " + locator);
+      return null;
     }
 
     return jqobj;
@@ -704,10 +705,11 @@ if (!window.Walkhub) {
       if (commands[command['pureCommand']]) {
         commands[command['pureCommand']]['init'](command, stepCompletionCallback);
 
+        var highlight;
         if (force || commands[command['pureCommand']]['auto']) {
           commands[command['pureCommand']].execute(command);
-        } else if (command['highlight']) {
-          createJoyrideBoilerplate(translator(command['highlight']), command, false);
+        } else if (command['highlight'] && (highlight = translator(command['highlight'], true))) {
+          createJoyrideBoilerplate(highlight, command, false);
         } else {
           Walkhub.modal(command);
         }
