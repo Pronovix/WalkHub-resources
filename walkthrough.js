@@ -498,7 +498,7 @@ if (!window.Walkhub) {
                openStepEditDialog(command, function () {
                  $('.joyride-next-tip, .joyride-normal-tip').show();
                }, function (step) {
-                 $('span.step-title-' + uniq).html(step.title);
+                 $('span.step-title-' + uniq).html(step.showTitle ? step.title : '');
                  $('span.step-description-' + uniq).html(step.description);
                });
                $('.joyride-next-tip, .joyride-normal-tip').hide();
@@ -548,6 +548,24 @@ if (!window.Walkhub) {
       .attr('id', 'description')
       .appendTo(fieldset);
 
+    $('<label >')
+      .attr('for', 'showtitle')
+      .html('Show title')
+      .appendTo(fieldset);
+
+    var showtitle = $('<input />')
+      .attr('type', 'checkbox')
+      .attr('name', 'showtitle')
+      .attr('id', 'showtitle')
+      .appendTo(fieldset);
+
+    if (step.showTitle) {
+      showtitle.attr('checked', 'checked');
+    }
+
+    $('<hr />')
+      .appendTo(fieldset);
+
     $('<input />')
       .attr('type', 'submit')
       .val('Save')
@@ -557,6 +575,7 @@ if (!window.Walkhub) {
       event.preventDefault();
       step.titleRaw = $('input#title', form).val();
       step.descriptionRaw = $('textarea#description', form).val();
+      step.showTitle = $('input#showtitle', form).get(0).checked;
       submit();
       form.remove();
       window.walkthrough.updateCurrentStep(step, success);
