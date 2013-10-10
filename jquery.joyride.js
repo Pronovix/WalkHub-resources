@@ -912,4 +912,4 @@
     }
   };
 
-}(jQuery, this));
+}(jqWalkhub, this));
