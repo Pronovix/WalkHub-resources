@@ -1,7 +1,7 @@
 prodc = java -jar closure-compiler.jar
 debugc = cat
 
-jquery = jquery.js jquery.cookie.js
+jquery = jquery.js noconflict.js jquery.cookie.js
 modernizr = modernizr.mq.js
 joyride = jquery.joyride.js
 app = walkthrough.js
