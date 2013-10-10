@@ -69,4 +69,4 @@
     return false;
   };
 
-})(jQuery, document);
+})(jqWalkhub, document);
