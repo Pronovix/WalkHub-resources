@@ -748,4 +748,4 @@ if (!window.Walkhub) {
   };
 
 
-})(jQuery);
+})(jqWalkhub);
