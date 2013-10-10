@@ -1,0 +1,1 @@
+jqWalkhub = jQuery.noConflict(true);
