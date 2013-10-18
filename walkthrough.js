@@ -385,8 +385,11 @@ if (!window.Walkhub) {
       dom: function (arg) {
       },
       xpath: function (arg) {
-        var result = document.evaluate(arg, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        return $(result);
+        var result = document.evaluate(arg, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        if (result.length > 1) {
+          return $(result[0]);
+        }
+        return $(''); // empty jquery object
       },
       link: function (arg) {
         arg = arg.replace('(', '\\(').replace(')', '\\)');
