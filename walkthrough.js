@@ -279,7 +279,7 @@ if (!window.Walkhub) {
         step = data;
         callback(data);
       }, function () {
-        alert('Updating step failed');
+        alert('Updating the step failed.');
       });
     };
 
@@ -414,7 +414,7 @@ if (!window.Walkhub) {
     jqobj = jqobj || $(locator);
 
     if (verbose && jqobj.length == 0 && !unloading) {
-      alert("Selenium locator did not found: " + locator);
+      alert("The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', locator));
       return null;
     }
 
@@ -737,7 +737,7 @@ if (!window.Walkhub) {
         }
 
       } else {
-        alert("Unsupported selenium command: " + command['pureCommand']);
+        alert('The Selenium command "[command]" is not supported.'.replace('[command]', command['pureCommand']));
       }
     }, 0);
   };
