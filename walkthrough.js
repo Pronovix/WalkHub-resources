@@ -4,6 +4,12 @@ if (!window.Walkhub) {
 
 (function ($) {
 
+  if (window.Walkhub.initialized) {
+    return;
+  }
+
+  window.Walkhub.initialized = true;
+
   var MAXIMUM_ZINDEX = 2147483647;
   var LINK_CHECK_TIMEOUT = 500;
 
@@ -216,13 +222,18 @@ if (!window.Walkhub) {
       step: null,
       completed: false,
       stepIndex: 0,
-      parameters: {}
+      parameters: {},
+      HTTPProxyURL: ''
     };
 
     var walkthrough = null;
     var step = null;
 
     var self = this;
+
+    this.getHTTPProxyURL = function () {
+      return state.HTTPProxyURL;
+    };
 
     this.initStep = function () {
       server.log('Step initialization started.');
@@ -628,7 +639,9 @@ if (!window.Walkhub) {
     open: {
       init: function (command, stepCompletionCallback) {},
       execute: function (command) {
-        window.location = command['arg1'];
+        var url = command['arg1'];
+        httpProxy = walkthrough.getHTTPProxyURL();
+        window.location = httpProxy && (httpProxy + '?url=' + url) || url;
       },
       // This means that this step will be executed automatically.
       auto: true
@@ -645,6 +658,10 @@ if (!window.Walkhub) {
   window.proxy = null;
 
   function negotiateWalkhubOrigin() {
+    if (Walkhub.ProxyOrigin) {
+      return Walkhub.ProxyOrigin();
+    }
+
     if (Walkhub.Origin) {
       return Walkhub.Origin();
     }
