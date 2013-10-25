@@ -640,8 +640,8 @@ if (!window.Walkhub) {
       init: function (command, stepCompletionCallback) {},
       execute: function (command) {
         var url = command['arg1'];
-        httpProxy = walkthrough.getHTTPProxyURL();
-        window.location = httpProxy && (httpProxy + '?url=' + url) || url;
+        var httpProxy = walkthrough.getHTTPProxyURL();
+        window.location = httpProxy && (httpProxy + '?url=' + encodeURIComponent(url)) || url;
       },
       // This means that this step will be executed automatically.
       auto: true
