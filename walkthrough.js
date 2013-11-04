@@ -442,8 +442,9 @@ if (!window.Walkhub) {
         return $(''); // empty jquery object
       },
       link: function (arg) {
-        arg = arg.replace('(', '\\(').replace(')', '\\)');
-        return $('a:contains("' + arg + '")');
+        return $('a').filter(function () {
+          return $(this).text() === arg;
+        });
       },
       css: function (arg) {
         return $(arg);
