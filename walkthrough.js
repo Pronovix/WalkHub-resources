@@ -661,6 +661,8 @@ if (!window.Walkhub) {
       execute: function (command) {
         translator(command['arg1'])
           .val(command['arg2'])
+          .keydown()
+          .keyup()
           .change();
       }
     },
@@ -710,6 +712,7 @@ if (!window.Walkhub) {
   }
 
   $(function () {
+    // Set up connection to the parent or opener (server or proxy)
     var origin = negotiateWalkhubOrigin();
     function ping(source, origin) {
       var message = JSON.stringify({type: 'ping', origin: window.location.origin});
