@@ -13,6 +13,13 @@ if (!window.Walkhub) {
   var MAXIMUM_ZINDEX = 2147483647;
   var LINK_CHECK_TIMEOUT = 500;
 
+  var iOS =
+    navigator.platform === 'iPad' ||
+    navigator.platform === 'iPad Simulator' ||
+    navigator.platform === 'iPhone' ||
+    navigator.platform === 'iPhone Simulator' ||
+    navigator.platform === 'iPod';
+
   var unloading = false;
 
   window.addEventListener('beforeunload', function () {
