@@ -464,7 +464,7 @@ if (!window.Walkhub) {
 
     jqobj = jqobj || $(locator);
 
-    if (verbose && jqobj.length == 0 && !unloading) {
+    if (verbose && jqobj.length == 0 && !unloading && !iOS) {
       alert("The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', locator));
       return null;
     }
