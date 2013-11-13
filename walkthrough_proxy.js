@@ -1,0 +1,14 @@
+// Show a warning message that you are browsing through a proxy.
+
+(function ($) {
+  $(document).ready(function() {
+    var popupContent = Walkhub.proxyMessage;
+    var $popup = $('<div id="walkthrough-proxy-message" class="joyride-tip-guide"><span id="walkthrough-proxy-message-close">X</span>' + popupContent +'</div>');
+    $('body').append($popup);
+
+    $('#walkthrough-proxy-message-close').on("click", function() {
+      $('#walkthrough-proxy-message').hide();
+    });
+  });
+
+})(jqWalkhub)
