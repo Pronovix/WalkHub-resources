@@ -7,7 +7,7 @@
     $('body').append($popup);
 
     $('#walkthrough-proxy-message-close').on("click", function() {
-      $('#walkthrough-proxy-message').hide();
+      $('#walkthrough-proxy-message').fadeOut().destroy();
     });
   });
 
