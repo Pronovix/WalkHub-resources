@@ -8,14 +8,14 @@
 
 // Font icon - ICOMOON
 @font-face
-  font-family: 'icomoon'
-  src: url('fonts/icomoon.eot')
-  src: url('fonts/icomoon.eot?#iefix') format("embedded-opentype"), url('fonts/icomoon.ttf') format("truetype"), url('fonts/icomoon.woff') format("woff"), url('fonts/icomoon.svg#icomoon') format("svg")
+  font-family: 'joyride'
+  src: url('fonts/joyride.eot')
+  src: url('fonts/joyride.eot?#iefix') format("embedded-opentype"), url('fonts/joyride.ttf') format("truetype"), url('fonts/joyride.woff') format("woff"), url('fonts/joyride.svg#icomoon') format("svg")
   font-weight: normal
   font-style: normal
 
 [class^="icon-"], [class*=" icon-"]
-  font-family: 'icomoon'
+  font-family: 'joyride'
   speak: none
   font-style: normal
   font-weight: normal
@@ -87,6 +87,12 @@ body
 .joyride-content-wrapper
   padding: 10px
 
+  *
+    margin: 0
+    border: 0
+    padding: 0
+    background: transparent
+
   p
     color: #494949
 
@@ -94,30 +100,27 @@ body
   input[type="submit"],
   a.joyride-next-tip,
   a.joyride-normal-tip
-    +transition($transition-base)
-    font-size: 19px
-    padding: 0.5em 1.5em
-    display: inline-block
-    cursor: pointer
     +border-radius(0.35em)
     +box-shadow(white 0 1px 0 inset)
     background-color: rgb(244,244,245)
     +filter-gradient(#f4f4f5, #d9d9dd, vertical)
     +background-image(linear-gradient(top, rgba(244,244,245,1) 0%,rgba(217,217,221,1) 100%))
     border: 1px solid #ccccd1
-    color: white
-    text-shadow: #afafb6 0 -1px 0
+    color: #6f6f6f
+    cursor: pointer
+    display: inline-block
     font-size: 8px
-    line-height: 11.6px
     font-size: 0.8rem
+    line-height: 11.6px
     line-height: 1.16rem
-    border-radius: 0.35em
     padding: 0.45em 0.85em
     text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.75)
-    color: #6f6f6f
+    +transition($transition-base)
+    text-decoration: none
     vertical-align: bottom
 
     &:hover
+      text-decoration: none
       background-color: #ccccd1
       background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e7e7e9), color-stop(100%, #ccccd1))
       background: -webkit-linear-gradient(#e7e7e9, #ccccd1)
@@ -126,11 +129,12 @@ body
       background: linear-gradient(#e7e7e9, #ccccd1)
 
     &:active
+      text-decoration: none
       text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.75)
       color: #6f6f6f
 
     &:after
-      font-family: 'icomoon'
+      font-family: 'joyride'
       speak: none
       font-style: normal
       font-weight: normal
@@ -187,6 +191,9 @@ body
   hr
     margin: 0
     padding: 0
+    border: 0
+    background: transparent
+    +box-shadow(none)
 
   label
     margin-top: 5px
@@ -201,6 +208,7 @@ body
 
   input[type="textfield"],
   textarea
+    background: #FFFFFF
     color: #494949
     width: 72%
     max-width: 72%
@@ -217,9 +225,9 @@ body
 /* Mobile
 +max-screen(767px)
   .joyride-tip-guide
+    left: 2.5% !important
     width: 95% !important
     +border-radius(0)
-    left: 2.5% !important
 
   .joyride-tip-guide-wrapper
     width: 100%
