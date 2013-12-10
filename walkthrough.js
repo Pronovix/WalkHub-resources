@@ -37,7 +37,7 @@ if (!window.Walkhub) {
       return '<a href="https://facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '" target="_blank" class="walkhub-sharing-link-open-in-dialog" data-width="626" data-height="436">facebook</a>';
     },
     googleplus: function (url) {
-      return '<a href="https://plus.google.com/share?url=' + url + '" target="_blank" class="walkhub-sharing-link-open-in-dialog">google+</a>';
+      return '<a href="https://plus.google.com/share?url=' + encodeURIComponent(url) + '" target="_blank" class="walkhub-sharing-link-open-in-dialog">google+</a>';
     },
     email: function (url, title) {
       var link = '<a href="mailto:?subject=SUBJECT_TEMPLATE&body=BODY_TEMPLATE">email</a>';
