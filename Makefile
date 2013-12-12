@@ -1,18 +1,26 @@
 prodc = java -jar tools/closure-compiler.jar
 debugc = cat
 
-jquery = src/jquery.js src/noconflict.js src/jquery.cookie.js
-modernizr = src/modernizr.mq.js
-joyride = src/jquery.joyride.js
-app = src/walkthrough.js
+jquery = src/javascript/jquery.js src/javascript/noconflict.js src/javascript/jquery.cookie.js
+modernizr = src/javascript/modernizr.mq.js
+joyride = src/javascript/jquery.joyride.js
+app = src/javascript/walkthrough.js
 
 allfiles = $(jquery) $(modernizr) $(joyride) $(app)
 
-all:
+all: javascript sass
+
+debug: javascript_debug sass
+
+javascript:
 	$(prodc) $(allfiles) > compiled.js
 
-debug:
+javascript_debug:
 	$(debugc) $(allfiles) > compiled.js
+
+sass:
+	compass compile
 
 clean:
 	rm compiled*.js
+	compass clean
