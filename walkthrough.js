@@ -473,15 +473,17 @@ if (!window.Walkhub) {
   }
 
   function sanitizeValue(value) {
-    var types = {
-      'label': function (arg) {
-        return arg;
-      }
-    };
+    if (value) {
+      var types = {
+        'label': function (arg) {
+          return arg;
+        }
+      };
 
-    for (var prefix in types) {
-      if (value.indexOf(prefix + "=") === 0) {
-        return types[prefix](value.substr(prefix.length + 1));
+      for (var prefix in types) {
+        if (value.indexOf(prefix + "=") === 0) {
+          return types[prefix](value.substr(prefix.length + 1));
+        }
       }
     }
 
