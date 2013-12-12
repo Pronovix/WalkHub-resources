@@ -1,10 +1,10 @@
 prodc = java -jar closure-compiler.jar
 debugc = cat
 
-jquery = jquery.js noconflict.js jquery.cookie.js
-modernizr = modernizr.mq.js
-joyride = jquery.joyride.js
-app = walkthrough.js
+jquery = src/jquery.js src/noconflict.js src/jquery.cookie.js
+modernizr = src/modernizr.mq.js
+joyride = src/jquery.joyride.js
+app = src/walkthrough.js
 
 allfiles = $(jquery) $(modernizr) $(joyride) $(app)
 
