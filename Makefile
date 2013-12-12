@@ -1,4 +1,4 @@
-prodc = java -jar closure-compiler.jar
+prodc = java -jar tools/closure-compiler.jar
 debugc = cat
 
 jquery = src/jquery.js src/noconflict.js src/jquery.cookie.js
