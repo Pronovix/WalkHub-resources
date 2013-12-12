@@ -685,7 +685,20 @@ if (!window.Walkhub) {
       execute: function (command) {
         var url = command['arg1'];
         var httpProxy = walkthrough.getHTTPProxyURL();
-        window.location = httpProxy && (httpProxy + '?url=' + encodeURIComponent(url)) || url;
+        if (httpProxy) {
+          var uri = new URI(url);
+          var protocol = uri.protocol() || "http";
+          var hostname = uri.hostname();
+          var port = uri.port() || "80";
+          var proxyuri = new URI(httpProxy);
+          var proxyhostname = proxyuri.hostname();
+          proxyuri
+            .hostname(protocol + "." + hostname + "." + port + "." + proxyhostname)
+            .search({url: url});
+          window.location = proxyuri.toString();
+        } else {
+          window.location = url;
+        }
       },
       // This means that this step will be executed automatically.
       auto: true
