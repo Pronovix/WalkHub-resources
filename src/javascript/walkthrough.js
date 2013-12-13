@@ -598,11 +598,16 @@ if (!window.Walkhub) {
       .html('Description')
       .appendTo(fieldset);
 
-    $('<textarea />')
+    var description = $('<textarea />')
       .val(step.descriptionRaw)
       .attr('name', 'description')
       .attr('id', 'description')
       .appendTo(fieldset);
+
+    var suggestionwrapper = $('<div />')
+      .attr('class', 'suggestions')
+      .appendTo(fieldset)
+      .hide();
 
     $('<label >')
       .attr('for', 'showtitle')
@@ -635,6 +640,27 @@ if (!window.Walkhub) {
       submit();
       form.remove();
       window.walkthrough.updateCurrentStep(step, success);
+    });
+
+    var querystring =
+      'command=' + encodeURIComponent(step.command) + '&' +
+      'arg1=' + encodeURIComponent(step.arg1) + '&' +
+      'arg2=' + encodeURIComponent(step.arg2);
+    window.client.send('walkhub-step-suggestion?' + querystring, null, function (data) {
+      suggestionwrapper
+        .show()
+        .append($('<p/>').text('Suggestions: '));
+      for (var i in data) {
+        $('<p />')
+          .text(data[i])
+          .click(function (event) {
+            event.preventDefault();
+            description.val($(this).text());
+          })
+          .css('cursor', 'pointer')
+          .css('font-size', 'small')
+          .appendTo(suggestionwrapper);
+      }
     });
 
     form.appendTo($('.joyride-content-wrapper'));
