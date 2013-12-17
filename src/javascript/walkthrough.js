@@ -305,7 +305,7 @@ if (!window.Walkhub) {
           for (var sl in sharing_links) {
             share += ' ' +  sharing_links[sl](walkthrough.url, walkthrough.name) + ' ';
           }
-          Walkhub.showExitDialog('<p>You have finished playing the walkthrough. You can share it via</p>' + share, {
+          Walkhub.showExitDialog('<p>This is the end of this walkthrough. Liked it? Share it through one of the following services:</p>' + share, {
             'Finish': finished
           }, function () {});
         }, 100);
@@ -666,6 +666,13 @@ if (!window.Walkhub) {
     form.appendTo($('.joyride-content-wrapper'));
   }
 
+  function isElementButtonLike(element) {
+    var tagname = element.prop('tagName').toLowerCase();
+    return tagname == 'a' ||
+      tagname == 'button' ||
+      (tagname == 'input' && element.attr('type').toLowerCase() == 'submit');
+  }
+
   // Dispatch command
   var commands = {
     click: {
@@ -696,14 +703,24 @@ if (!window.Walkhub) {
     },
     select: {
       init: function (command, stepCompletionCallback) {
-        translator(command['arg1'])
-          .unbind('change.walkhub')
-          .bind('change.walkhub', stepCompletionCallback || stepCompleted);
+        var element = translator(command['arg1']);
+        if (isElementButtonLike(element)) {
+          commands.click.init(command, stepCompletionCallback);
+        } else {
+          element
+            .unbind('change.walkhub')
+            .bind('change.walkhub', stepCompletionCallback || stepCompleted);
+        }
       },
       execute: function (command) {
-        translator(command['arg1'])
-          .val(sanitizeValue(command['arg2']))
-          .change();
+        var element = translator(command['arg1']);
+        if (isElementButtonLike(element)) {
+          commands.click.execute(command);
+        } else {
+          element
+            .val(sanitizeValue(command['arg2']))
+            .change();
+        }
       }
     },
     open: {
