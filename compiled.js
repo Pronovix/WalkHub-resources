@@ -12923,7 +12923,9 @@ if (!window.Walkhub) {
         setTimeout(function () {
           var share = '';
           for (var sl in sharing_links) {
-            share += ' ' +  sharing_links[sl](walkthrough.url, walkthrough.name) + ' ';
+            if (sharing_links.hasOwnProperty(sl)) {
+              share += ' ' + sharing_links[sl](walkthrough.url, walkthrough.name) + ' '
+            }
           }
           Walkhub.showExitDialog('<p>This is the end of this walkthrough. Liked it? Share it through one of the following services:</p>' + share, {
             'Finish': finished
@@ -12980,7 +12982,13 @@ if (!window.Walkhub) {
     function processStep(step) {
       var props = ['arg1', 'arg2', 'highlight', 'description'];
       for (var parameter in state.parameters) {
+        if (!state.parameters.hasOwnProperty(parameter)) {
+          continue;
+        }
         for (var prop in props) {
+          if (!props.hasOwnProperty(prop)) {
+            continue;
+          }
           prop = props[prop];
           if (step[prop]) {
             step[prop] = step[prop].replace('[' + parameter + ']', state.parameters[parameter]);
@@ -13076,7 +13084,7 @@ if (!window.Walkhub) {
     var jqobj = null;
 
     for (var prefix in locators) {
-      if (locator.indexOf(prefix + "=") === 0) {
+      if (locators.hasOwnProperty(prefix) && locator.indexOf(prefix + "=") === 0) {
         jqobj = locators[prefix](locator.substr(prefix.length + 1));
         break;
       }
@@ -13101,7 +13109,7 @@ if (!window.Walkhub) {
       };
 
       for (var prefix in types) {
-        if (value.indexOf(prefix + "=") === 0) {
+        if (types.hasOwnProperty(prefix) && value.indexOf(prefix + "=") === 0) {
           return types[prefix](value.substr(prefix.length + 1));
         }
       }
@@ -13271,6 +13279,9 @@ if (!window.Walkhub) {
         .show()
         .append($('<p/>').text('Suggestions: '));
       for (var i in data) {
+        if (!data.hasOwnProperty(i)) {
+          continue;
+        }
         $('<p />')
           .text(data[i])
           .click(function (event) {
@@ -13396,10 +13407,13 @@ if (!window.Walkhub) {
       var message = JSON.stringify({type: 'ping', origin: window.location.origin});
       source.postMessage(message, origin);
     }
+
     window.addEventListener('message', function (event) {
       if (window.client) {
+        window.removeEventListener('message', this);
         return;
       }
+
       var data = JSON.parse(event.data);
       if (data.type === 'pong') {
         window.client = new WalkhubClient(event.source, event.origin);
@@ -13408,9 +13422,7 @@ if (!window.Walkhub) {
         window.removeEventListener('message', this);
       }
     });
-    if (window.opener) {
-      ping(window.opener, origin);
-    }
+
     if (window.parent && window.parent != window) {
       ping(window.parent, window.location.origin);
       ping(window.parent, origin);
@@ -13445,6 +13457,9 @@ if (!window.Walkhub) {
     }
     createJoyrideBoilerplate(null, {description: message}, true, opts, function () {
       for (var text in buttons) {
+        if (!buttons.hasOwnProperty(text)) {
+          continue;
+        }
         (function () {
           var buttonfunc = buttons[text];
           var button = $('<a />')
