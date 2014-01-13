@@ -94,7 +94,7 @@
           return null;
         })
         .addLocatorTranslator('xpath', function (arg) {
-          var result = document.evaluate(arg, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+          var result = window.document.evaluate(arg, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
           if (result.snapshotLength > 0) {
             return $(result.snapshotItem(0));
           }

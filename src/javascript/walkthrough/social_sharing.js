@@ -21,7 +21,7 @@
   };
 
   Walkhub.SocialSharingFix = function () {
-    $(document).on('click', 'a.walkhub-sharing-link-open-in-dialog', function (event) {
+    $(window.document).on('click', 'a.walkhub-sharing-link-open-in-dialog', function (event) {
       var link = $(this);
       var width = link.data('width') || '550';
       var height = link.data('height') || '420';
