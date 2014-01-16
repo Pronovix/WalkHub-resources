@@ -81,7 +81,7 @@
     if (this.walkthrough['steps'].length == this.state.stepIndex) { // Last step
       this.client.log('Last step');
       function finished() {
-        this.finish();
+        that.finish();
       }
 
       setTimeout(function () {

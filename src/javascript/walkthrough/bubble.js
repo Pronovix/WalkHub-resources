@@ -54,6 +54,7 @@
       nextButton: true,
       cookieMonster: false,
       autoStart: true,
+      modal: !this.element,
       preStepCallback: function () {
         $('div.joyride-tip-guide').css('z-index', Walkhub.Context.MAXIMUM_ZINDEX);
         $('.joyride-next-tip')
@@ -96,7 +97,7 @@
     }
 
     Walkhub.Bubble.previous = $('<ol />')
-      .append($('<li />').append(stepText).attr('data-class', this.step ? uniq : ''))
+      .append($('<li />').append(stepText).attr('data-class', this.element ? uniq : ''))
       .hide()
       .appendTo($('body'))
       .joyride(opts);

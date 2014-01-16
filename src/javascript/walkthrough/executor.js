@@ -20,6 +20,8 @@
   Walkhub.Executor.prototype.pingPong = function () {
     var that = this;
 
+    var success = false;
+
     function pingPongServer(event) {
       if (that.client) {
         window.removeEventListener('message', pingPongServer);
@@ -28,6 +30,7 @@
 
       var data = JSON.parse(event.data);
       if (data.type === 'pong') {
+        success = true;
         that.client = new Walkhub.Client(event.source, event.origin);
         that.proxy = new Walkhub.ProxyServer(event.source, event.origin);
         that.controller = new Walkhub.Controller(that.client, that);
@@ -40,6 +43,13 @@
       Walkhub.Executor.ping(window.parent, window.location.origin);
       Walkhub.Executor.ping(window.parent, this.origin);
     }
+
+    setTimeout(function () {
+      if (!success) {
+        that.showExitDialog(
+          '<p>This website is associated with another WalkHub. Please make sure to use its own WalkHub to play this Walkthrough.</p>');
+      }
+    }, 1000);
   };
 
   Walkhub.Executor.prototype.showExitDialog = function (message, buttons, cancel) {
@@ -53,6 +63,9 @@
     bubble
       .setExtraOptions(opts)
       .setExtraSetupCallback(function () {
+        if (!buttons) {
+          return;
+        }
         for (var text in buttons) {
           if (!buttons.hasOwnProperty(text)) {
             continue;
