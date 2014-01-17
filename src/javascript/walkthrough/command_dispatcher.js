@@ -87,8 +87,17 @@
             if (Walkhub.CommandDispatcher.isElementButtonLike(element)) {
               clickExecute(step);
             } else {
+              var sanitizedValue = Walkhub.CommandDispatcher.sanitizeValue(step['arg2']);
+              var realValue = null;
+              if (element.get(0).tagName.toLowerCase() === 'select') {
+                element.children().each(function () {
+                  if ($(this).html() === sanitizedValue) {
+                    realValue = $(this).attr('value');
+                  }
+                });
+              }
               element
-                .val(Walkhub.CommandDispatcher.sanitizeValue(step['arg2']))
+                .val(realValue || sanitizedValue)
                 .change();
             }
           })
