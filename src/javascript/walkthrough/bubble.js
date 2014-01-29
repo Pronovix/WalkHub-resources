@@ -45,7 +45,7 @@
       this.element.addClass(uniq);
     }
 
-    var stepText = $('<p><span class="step-title-UNIQ">TITLE</span><br /><span class="step-description-UNIQ">DESCRIPTION</span></p>'
+    var stepText = $('<h5 class="step-title step-title-UNIQ">TITLE</h5><p class="step-description step-description-UNIQ">DESCRIPTION</p>'
       .replace('TITLE', this.step['showTitle'] ? (this.step['title'] || '') : '')
       .replace('DESCRIPTION', this.step['description'] || '')
       .replace(/UNIQ/g, uniq));
@@ -78,8 +78,8 @@
                   $('.joyride-next-tip, .joyride-normal-tip').show();
                 })
                 .setSuccessCallback(function (step) {
-                  $('span.step-title-' + uniq).html(step.showTitle ? step.title : '');
-                  $('span.step-description-' + uniq).html(step.description);
+                  $('h5.step-title-' + uniq).html(step.showTitle ? step.title : '');
+                  $('p.step-description-' + uniq).html(step.description);
                 })
                 .open();
               $('.joyride-next-tip, .joyride-normal-tip').hide();
