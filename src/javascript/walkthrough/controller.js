@@ -22,7 +22,7 @@
       that.client.log(['New state', that.state]);
       if (that.state.walkthrough) {
         that.refreshWalkthrough(function () {
-          if (that.state.step) {
+          if (that.state.step && !that.state.completed) {
             that.client.log('Loading step');
             that.refreshStep(function () {
               that.initStep();
@@ -75,6 +75,8 @@
 
     if (!this.state.completed && this.step) {
       this.client.log('Executing incomplete step.');
+      this.state.completed = true;
+      this.client.updateState(this.state);
       this.executor.execute(this.step, true);
     }
 
@@ -88,7 +90,7 @@
         var share = '';
         for (var sl in Walkhub.SocialSharing) {
           if (Walkhub.SocialSharing.hasOwnProperty(sl)) {
-            share += ' ' + Walkhub.SocialSharing[sl](that.walkthrough.url, that.name) + ' '
+            share += ' ' + Walkhub.SocialSharing[sl](that.walkthrough.url, that.name) + ' ';
           }
         }
         that.executor.showExitDialog('<p>This is the end of this walkthrough. Liked it? Share it through one of the following services:</p>' + share, {
@@ -99,7 +101,7 @@
       return;
     }
 
-    this.client.log('Loading next step');
+    this.client.log('Loading next step (' + this.state.stepIndex + ')');
     this.state.step = this.walkthrough['steps'][this.state.stepIndex];
     this.state.stepIndex++;
     this.client.updateState(this.state);
@@ -114,7 +116,7 @@
     console.log(['Updating step', step]);
     this.client.send('walkhub-step/' + this.state.step, step, function (data) {
       console.log(['Updated data', data]);
-      step = data;
+      that.step = data;
       callback(data);
     }, function () {
       that.client.showError('updateCurrentStep', 'Updating the step failed.');
