@@ -10,6 +10,10 @@
     console.log(arguments);
   };
 
+  if (window.parent == window) {
+    return;
+  }
+
   Walkhub.currentExecutor = new Walkhub.Executor();
 
   $(function () {

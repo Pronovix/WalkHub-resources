@@ -22,5 +22,7 @@ if (!window.Walkhub) {
     setTimeout(Walkhub.enforcer, 500);
   };
 
-  Walkhub.enforcer();
+  if (window.parent != window) {
+    Walkhub.enforcer();
+  }
 })(window.Walkhub, window);
