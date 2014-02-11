@@ -1,4 +1,5 @@
 (function ($, Walkhub, window) {
+  "use strict";
   if (!window.console) {
     window.console = {
       'log': function () {
@@ -10,7 +11,7 @@
     console.log(arguments);
   };
 
-  if (window.parent == window) {
+  if (window.parent === window) {
     return;
   }
 
