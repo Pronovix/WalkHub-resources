@@ -89,6 +89,14 @@
         if (that.extraSetup) {
           that.extraSetup();
         }
+      },
+      preRideCallback: function() {
+        if (Walkhub.Context.fullscreen) {
+          // Hide close button on full window mode. We have to add the css to the head, because the element doesn't
+          // exist, when we could encroach.
+          $css = $('<style type="text/css">.joyride-close-tip{display:none !important;}</style>');
+          $('head').append($css);
+        }
       }
     };
 
