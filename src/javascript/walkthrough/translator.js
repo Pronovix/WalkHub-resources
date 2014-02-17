@@ -80,10 +80,25 @@
         return $('[name=' + arg + ']');
       };
 
+      var xpath = function (arg) {
+        var result = null;
+        try {
+          result = window.document.evaluate(arg, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        } catch (ex) {}
+        if (result !== null && result.snapshotLength > 0) {
+          return $(result.snapshotItem(0));
+        }
+        return $(''); // empty jquery object
+      };
+
+      var css = function (arg) {
+        return $(arg);
+      };
+
       this.instanceObject
         .addLocatorTranslator('identifier', function (arg) {
           var jq = id(arg);
-          if (jq.length == 0) {
+          if (jq.length === 0) {
             jq = name(arg);
           }
           return jq;
@@ -93,25 +108,32 @@
         .addLocatorTranslator('dom', function (arg) {
           return null;
         })
-        .addLocatorTranslator('xpath', function (arg) {
-          var result = window.document.evaluate(arg, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-          if (result.snapshotLength > 0) {
-            return $(result.snapshotItem(0));
-          }
-          return $(''); // empty jquery object
-        })
+        .addLocatorTranslator('xpath', xpath)
         .addLocatorTranslator('link', function (arg) {
           return $('a').filter(function () {
             return $(this).text() === arg;
           });
         })
-        .addLocatorTranslator('css', function (arg) {
-          return $(arg);
-        })
+        .addLocatorTranslator('css', css)
         .addLocatorTranslator('ui', function (arg) {
           return null;
         })
-        .setDefaultLocator('xpath')
+        .addLocatorTranslator('default', function (arg) {
+          var item = null;
+          try {
+            item = xpath(arg);
+            // Intentional empty catch here.
+            // If there's something wrong with the xpath,
+            // then it's probably an older selenium test,
+            // and it's not an xpath but a css selector.
+          } catch (ex) {}
+          if (item === null || item.length === 0) {
+            item = css(arg);
+          }
+
+          return item;
+        })
+        .setDefaultLocator('default')
         .setRetries(120);
     }
 
