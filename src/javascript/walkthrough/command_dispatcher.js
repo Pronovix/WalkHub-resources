@@ -128,7 +128,11 @@
   };
 
   Walkhub.CommandDispatcher.isElementButtonLike = function (element) {
-    var tagname = element.prop('tagName').toLowerCase();
+    var proptagname = element.prop('tagName');
+    if (!proptagname) {
+      return false;
+    }
+    var tagname = proptagname.toLowerCase();
     return tagname == 'a' ||
       tagname == 'button' ||
       (tagname == 'input' && element.attr('type').toLowerCase() == 'submit');
