@@ -1,30 +1,28 @@
-@import 'compass/support'
-@import 'compass/utilities/general/clearfix'
-@import 'compass/utilities/sprites'
-@import 'compass/css3'
-@import 'compass/layout'
-@import 'normalize'
-@import 'media-queries'
+// ---------------------
+// Compass include
+// ---------------------
+@import "compass/support"
+@import "compass/utilities/general/clearfix"
+@import "compass/utilities/sprites"
+@import "compass/css3"
+@import "compass/layout"
 
-// Font icon - ICOMOON
-@font-face
-  font-family: 'joyride'
-  src: url('fonts/joyride.eot')
-  src: url('fonts/joyride.eot?#iefix') format("embedded-opentype"), url('fonts/joyride.ttf') format("truetype"), url('fonts/joyride.woff') format("woff"), url('fonts/joyride.svg#icomoon') format("svg")
-  font-weight: normal
-  font-style: normal
+// ---------------------
+// Mixins include
+// ---------------------
+@import "mixins/mixins"
 
-[class^="icon-"], [class*=" icon-"]
-  font-family: 'joyride'
-  speak: none
-  font-style: normal
-  font-weight: normal
-  font-variant: normal
-  text-transform: none
-  line-height: 1
-  /* Better Font Rendering ===========
-  -webkit-font-smoothing: antialiased
-  -moz-osx-font-smoothing: grayscale
+// ---------------------
+// Font declare
+// ---------------------
++declare-font-face('joyride', 'joyride', 200)
+
+// ---------------------
+// FontIcon
+// ---------------------
+[class^="icon-"],
+[class*=" icon-"]
+  +font-joyride
 
 .icon-remove:before
   content: "\e600"
@@ -38,22 +36,21 @@
 .icon-circle-arrow-right:before
   content: "\e603"
 
+// ---------------------
 // Variables
+// ---------------------
 $transition-base: all 0.2s ease-in
 
 // Original file
 body
-  padding: 0
-  margin: 0
+  +mp0
+  +font-size(1.2)
   position: relative
   text-align: left
-  font-size: 12px
-  line-height: 1.2em
   color: #494949
   font-weight: normal
   font-style: normal
   line-height: 1
-  position: relative
   cursor: default
   text-rendering: optimizeLegibility
 
@@ -68,13 +65,15 @@ body
 /* Default styles for the container
 
 .joyride-tip-guide
-  font-family: Tahoma, Geneva, sans-serif
-  font-weight: normal
-  position: absolute
+  background-color: rgba(0,0,0,0.9)
   +filter-gradient(rgba(63,63,63,0.85), rgba(0,0,0,0.9), vertical)
+  $experimental-support-for-svg: true
   +background-image(linear-gradient(top,  rgba(63,63,63,0.85) 1%,rgba(0,0,0,0.9) 100%))
   +border-radius(4px)
   +box-shadow(0px 0px 15px 0px rgba(0,0,0,0.15))
+  font-family: Tahoma, Geneva, sans-serif
+  font-weight: normal
+  position: absolute
   border: 1px solid #000000
   display: none
   color: darken(#6F6F6F, 15%)
@@ -88,9 +87,8 @@ body
   padding: 10px
 
   *
-    margin: 0
+    +mp0
     border: 0
-    padding: 0
     background: transparent
 
   p,
@@ -106,29 +104,25 @@ body
     +box-shadow(white 0 1px 0 inset)
     background-color: rgb(244,244,245)
     +filter-gradient(#f4f4f5, #d9d9dd, vertical)
+    $experimental-support-for-svg: true
     +background-image(linear-gradient(top, rgba(244,244,245,1) 0%,rgba(217,217,221,1) 100%))
+    +transition($transition-base)
     border: 1px solid #ccccd1
     color: #6f6f6f
     cursor: pointer
     display: inline-block
-    font-size: 8px
-    font-size: 0.8rem
-    line-height: 11.6px
-    line-height: 1.16rem
+    +font-size(.8)
     padding: 0.4em 0.85em 0.35em
     text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.75)
-    +transition($transition-base)
     text-decoration: none
     vertical-align: bottom
 
     &:hover
       text-decoration: none
-      background-color: #ccccd1
-      background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e7e7e9), color-stop(100%, #ccccd1))
-      background: -webkit-linear-gradient(#e7e7e9, #ccccd1)
-      background: -moz-linear-gradient(#e7e7e9, #ccccd1)
-      background: -o-linear-gradient(#e7e7e9, #ccccd1)
-      background: linear-gradient(#e7e7e9, #ccccd1)
+      background-color: rgb(231,231,233)
+      @include filter-gradient(#e7e7e9, #ccccd1, vertical)
+      $experimental-support-for-svg: true
+      @include background-image(linear-gradient(top,  rgba(231,231,233,1) 0%,rgba(204,204,209,1) 100%))
 
     &:active
       text-decoration: none
@@ -136,16 +130,7 @@ body
       color: #6f6f6f
 
     &:after
-      font-family: 'joyride'
-      speak: none
-      font-style: normal
-      font-weight: normal
-      font-variant: normal
-      text-transform: none
-      line-height: 1
-      /* Better Font Rendering ===========
-      -webkit-font-smoothing: antialiased
-      -moz-osx-font-smoothing: grayscale
+      +font-joyride
       display: inline-block
       margin-left: 5px
       font-size: 11px
@@ -157,6 +142,7 @@ body
     +border-radius(0.35em)
     background-color: rgb(59,138,205)
     @include filter-gradient(#3b8acd, #035787, vertical)
+    $experimental-support-for-svg: true
     @include background-image(linear-gradient(top,  rgba(59,138,205,1) 0%,rgba(3,87,135,1) 100%))
     +box-shadow(inset 0px 0px 10px 0px rgba(255,255,255,0.35),inset 0px -3px 1px rgba(0,0,0,0.15),0px 2px 2px rgba(0,0,0,0.15))
     padding: 0.4em 0.85em 0.35em
@@ -168,6 +154,7 @@ body
     &:hover
       background-color: rgb(79,150,210)
       @include filter-gradient(#4f96d2, #0467a0, vertical)
+      $experimental-support-for-svg: true
       @include background-image(linear-gradient(top,  rgba(79,150,210,1) 0%,rgba(4,103,160,1) 100%))
 
     &:active
@@ -191,8 +178,7 @@ body
   form,
   label,
   hr
-    margin: 0
-    padding: 0
+    +mp0
     border: 0
     background: transparent
     +box-shadow(none)
@@ -249,20 +235,20 @@ body
     height: 0
 
     &.top
-      background-image: url('arrow-top.png')
+      background-image: image-url("arrow-top.png")
       width: 28px
       height: 14px
       top: -14px
       bottom: none
 
     &.bottom
-      background-image: url('arrow-bottom.png')
+      background-image: image-url("arrow-bottom.png")
       width: 28px
       height: 14px
       bottom: -14px
 
     &.right
-      background-image: url('arrow-right.png')
+      background-image: image-url("arrow-right.png")
       width: 14px
       height: 28px
       top: 22px
@@ -271,7 +257,7 @@ body
       right: -14px
 
     &.left
-      background-image: url('arrow-left.png')
+      background-image: image-url("arrow-left.png")
       width: 14px
       height: 28px
       top: 22px
@@ -280,7 +266,7 @@ body
       bottom: none
 
     &.top-right
-      background-image: url('arrow-top.png')
+      background-image: image-url("arrow-top.png")
       top: -28px
       width: 28px
       height: 14px
@@ -353,8 +339,6 @@ body
   position: fixed
   height: 100%
   width: 100%
-  background: rgb(0, 0, 0)
-  background: transparent
   background: rgba(0, 0, 0, 0.5)
   +opacity(.5)
   z-index: 100
