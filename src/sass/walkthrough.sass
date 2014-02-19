@@ -1,14 +1,22 @@
-@import 'compass/support'
-@import 'compass/utilities/general/clearfix'
-@import 'compass/utilities/sprites'
-@import 'compass/css3'
-@import 'compass/layout'
-@import 'normalize'
+// ---------------------
+// Compass include
+// ---------------------
+@import "compass/support"
+@import "compass/utilities/general/clearfix"
+@import "compass/utilities/sprites"
+@import "compass/css3"
+@import "compass/layout"
+
+// ---------------------
+// Mixins include
+// ---------------------
+@import "mixins/mixins"
 
 // Variables
 =background-gradient
   background-color: #0063ff
   @include filter-gradient(#0063ff, #0055d6, vertical)
+  $experimental-support-for-svg: true
   @include background-image(linear-gradient(top,  #0063ff 0%,#0055d6 100%))
 
 a.joyride-close-tip,
