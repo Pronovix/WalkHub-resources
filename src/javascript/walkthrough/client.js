@@ -19,6 +19,7 @@
           }
           that.baseURL = data.baseurl;
           that.serverKey = data.key;
+          Walkhub.Context.fullscreen = data.fullscreen;
           that.post({
             type: 'getState'
           });
