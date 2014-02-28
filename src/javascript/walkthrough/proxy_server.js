@@ -1,4 +1,5 @@
 (function ($, Walkhub, window) {
+  'use strict';
 
   Walkhub.ProxyServer = function (frame, defaultOrigin) {
     var that = this;

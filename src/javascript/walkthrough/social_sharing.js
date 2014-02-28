@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  'use strict';
+
   Walkhub.SocialSharing = {
     twitter: function (url) {
       var link = '<a href="https://twitter.com/intent/tweet?url=URL_PLACEHOLDER&text=TEXT_PLACEHOLDER&via=WalkHub" target="_blank" class="walkhub-sharing-link-open-in-dialog" data-width="550" data-height="420">twitter</a>';

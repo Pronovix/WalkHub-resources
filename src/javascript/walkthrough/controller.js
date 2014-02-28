@@ -1,4 +1,5 @@
 (function ($, Walkhub, window) {
+  'use strict';
 
   Walkhub.Controller = function (client, executor) {
     var that = this;

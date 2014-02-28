@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  'use strict';
+
   Walkhub.CommandDispatcher = function () {
     this.commands = {};
     this.aliases = {};

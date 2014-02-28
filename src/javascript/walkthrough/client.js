@@ -1,4 +1,5 @@
 (function ($, Walkhub, window) {
+  'use strict';
 
   Walkhub.Client = function (frame, defaultOrigin) {
     var that = this;
