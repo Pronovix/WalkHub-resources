@@ -1,0 +1,8 @@
+node_js:
+  - 1.4.4
+
+before_install:
+  - npm install
+
+test:
+  - jshint ./src/javascript/**/*.js
