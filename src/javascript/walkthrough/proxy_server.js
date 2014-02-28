@@ -15,13 +15,13 @@
         return;
       }
       var data = JSON.parse(event.data);
-      if (data && data.type && data.type == 'ping') {
+      if (data && data.type && data.type === 'ping') {
         that.log(['Ping received, sending pong', event.origin]);
         event.source.postMessage(JSON.stringify({type: 'pong', tag: 'proxy'}), event.origin);
         return;
       }
       if (that.serverKey) {
-        if (frame == event.source) {
+        if (frame === event.source) {
           if (data.proxy_key && that.tickets[data.proxy_key]) {
             that.post(data, that.tickets[data.proxy_key]);
             that.log(['Proxying data to the client', data]);
@@ -42,7 +42,7 @@
           that.post(data);
           that.log(['Proxying data to the server', data]);
         }
-      } else if (data && data.type && data.type == 'connect_ok') {
+      } else if (data && data.type && data.type === 'connect_ok') {
         that.origin = data.origin;
         that.serverKey = data.key;
         that.log('Proxy connected');
