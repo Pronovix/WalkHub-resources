@@ -1,4 +1,5 @@
 (function ($, Walkhub, window) {
+  'use strict';
 
   Walkhub.Controller = function (client, executor) {
     var that = this;
@@ -53,7 +54,7 @@
       that.client.updateState(that.state);
       that.client.log('Step completed');
     });
-    if (Walkhub.CommandDispatcher.instance().isAutomaticCommand(this.step['pureCommand'])) {
+    if (Walkhub.CommandDispatcher.instance().isAutomaticCommand(this.step.pureCommand)) {
       this.client.log('Automatically executing step.');
       this.nextStep();
     }
@@ -73,6 +74,10 @@
   Walkhub.Controller.prototype.nextStep = function () {
     var that = this;
 
+    function finished() {
+      that.finish();
+    }
+
     if (!this.state.completed && this.step) {
       this.client.log('Executing incomplete step.');
       this.state.completed = true;
@@ -80,11 +85,8 @@
       this.executor.execute(this.step, true);
     }
 
-    if (this.walkthrough['steps'].length == this.state.stepIndex) { // Last step
+    if (this.walkthrough.steps.length === this.state.stepIndex) { // Last step
       this.client.log('Last step');
-      function finished() {
-        that.finish();
-      }
 
       setTimeout(function () {
         var share = '';
@@ -102,7 +104,7 @@
     }
 
     this.client.log('Loading next step (' + this.state.stepIndex + ')');
-    this.state.step = this.walkthrough['steps'][this.state.stepIndex];
+    this.state.step = this.walkthrough.steps[this.state.stepIndex];
     this.state.stepIndex++;
     this.client.updateState(this.state);
     this.refreshStep(function () {
@@ -151,20 +153,20 @@
 
   Walkhub.Controller.prototype.processStep = function (step) {
     var props = ['arg1', 'arg2', 'highlight', 'description'];
+
     for (var parameter in this.state.parameters) {
-      if (!this.state.parameters.hasOwnProperty(parameter)) {
-        continue;
-      }
-      for (var prop in props) {
-        if (!props.hasOwnProperty(prop)) {
-          continue;
-        }
-        prop = props[prop];
-        if (step[prop]) {
-          step[prop] = step[prop].replace('[' + parameter + ']', this.state.parameters[parameter]);
+      if (this.state.parameters.hasOwnProperty(parameter)) {
+        for (var prop in props) {
+          if (props.hasOwnProperty(prop)) {
+            prop = props[prop];
+            if (step[prop]) {
+              step[prop] = step[prop].replace('[' + parameter + ']', this.state.parameters[parameter]);
+            }
+          }
         }
       }
     }
+
     return step;
   };
 

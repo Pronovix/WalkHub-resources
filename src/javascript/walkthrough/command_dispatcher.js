@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  'use strict';
+
   Walkhub.CommandDispatcher = function () {
     this.commands = {};
     this.aliases = {};
@@ -38,7 +40,8 @@
   };
 
   Walkhub.CommandDispatcher.prototype.isAutomaticCommand = function (command) {
-    return this.resolve(command)['automatic'];
+    var realCommand = this.resolve(command);
+    return realCommand.automatic;
   };
 
   Walkhub.CommandDispatcher.instance = function () {
@@ -49,31 +52,31 @@
       this.instanceObject
         .addCommand('click',
           clickInit = function (step, onStepCompleteCallback) {
-            Walkhub.Translator.instance().translate(step['arg1'])
+            Walkhub.Translator.instance().translate(step.arg1)
               .unbind('click.walkhub')
               .bind('click.walkhub', onStepCompleteCallback);
           },
           clickExecute = function (step) {
-            var element = Walkhub.Translator.instance().translate(step['arg1']);
+            var element = Walkhub.Translator.instance().translate(step.arg1);
             var raw = element.get(0);
             raw.click();
           })
         .addCommand('type',
           function (step, onStepCompleteCallback) {
-            Walkhub.Translator.instance().translate(step['arg1'])
+            Walkhub.Translator.instance().translate(step.arg1)
               .unbind('change.walkhub')
               .bind('change.walkhub', onStepCompleteCallback);
           },
           function (step) {
-            Walkhub.Translator.instance().translate(step['arg1'])
-              .val(step['arg2'])
+            Walkhub.Translator.instance().translate(step.arg1)
+              .val(step.arg2)
               .keydown()
               .keyup()
               .change();
           })
         .addCommand('select',
           function (step, onStepCompleteCallback) {
-            var element = Walkhub.Translator.instance().translate(step['arg1']);
+            var element = Walkhub.Translator.instance().translate(step.arg1);
             if (Walkhub.CommandDispatcher.isElementButtonLike(element)) {
               clickInit(step, onStepCompleteCallback);
             } else {
@@ -83,11 +86,11 @@
             }
           },
           function (step) {
-            var element = Walkhub.Translator.instance().translate(step['arg1']);
+            var element = Walkhub.Translator.instance().translate(step.arg1);
             if (Walkhub.CommandDispatcher.isElementButtonLike(element)) {
               clickExecute(step);
             } else {
-              var sanitizedValue = Walkhub.CommandDispatcher.sanitizeValue(step['arg2']);
+              var sanitizedValue = Walkhub.CommandDispatcher.sanitizeValue(step.arg2);
               var realValue = null;
               if (element.get(0).tagName.toLowerCase() === 'select') {
                 element.children().each(function () {
@@ -133,9 +136,9 @@
       return false;
     }
     var tagname = proptagname.toLowerCase();
-    return tagname == 'a' ||
-      tagname == 'button' ||
-      (tagname == 'input' && element.attr('type').toLowerCase() == 'submit');
+    return tagname === 'a' ||
+      tagname === 'button' ||
+      (tagname === 'input' && element.attr('type').toLowerCase() === 'submit');
   };
 
   Walkhub.CommandDispatcher.sanitizeValue = function (value) {

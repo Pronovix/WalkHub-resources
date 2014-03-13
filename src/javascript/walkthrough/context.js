@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  'use strict';
+
   Walkhub.Context = {
     MAXIMUM_ZINDEX: 2147483647,
     fullscreen: false,

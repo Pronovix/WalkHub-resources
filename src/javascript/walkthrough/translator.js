@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  'use strict';
+
   Walkhub.Translator = function () {
     this.locators = {};
     this.defaultLocator = "";

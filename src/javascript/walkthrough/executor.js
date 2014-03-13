@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  "use strict";
+
   Walkhub.Executor = function () {
     this.client = null;
     this.controller = null;
@@ -39,7 +41,7 @@
     }
     window.addEventListener('message', pingPongServer);
 
-    if (window.parent && window.parent != window) {
+    if (window.parent && window.parent !== window) {
       Walkhub.Executor.ping(window.parent, window.location.origin);
       Walkhub.Executor.ping(window.parent, this.origin);
     }
@@ -67,21 +69,20 @@
           return;
         }
         for (var text in buttons) {
-          if (!buttons.hasOwnProperty(text)) {
-            continue;
+          if (buttons.hasOwnProperty(text)) {
+            (function () {
+              var buttonfunc = buttons[text];
+              var button = $('<a />')
+                .attr('href', '#')
+                .addClass('joyride-next-tip')
+                .html(text)
+                .click(function (event) {
+                  event.preventDefault();
+                  buttonfunc();
+                });
+              $('.joyride-content-wrapper').append(button);
+            })();
           }
-          (function () {
-            var buttonfunc = buttons[text];
-            var button = $('<a />')
-              .attr('href', '#')
-              .addClass('joyride-next-tip')
-              .html(text)
-              .click(function (event) {
-                event.preventDefault();
-                buttonfunc();
-              });
-            $('.joyride-content-wrapper').append(button);
-          })();
         }
       })
       .show();
@@ -89,21 +90,22 @@
 
   Walkhub.Executor.prototype.execute = function (step, force, onStepComplete) {
     var that = this;
+
+    function noElement() {
+      var bubble = new Walkhub.Bubble(that.controller, null, step);
+      bubble.show();
+    }
+
     setTimeout(function () {
-      var command = step['pureCommand'];
+      var command = step.pureCommand;
       if (Walkhub.CommandDispatcher.instance().resolve(command)) {
         Walkhub.CommandDispatcher.instance().initCommand(command, step, onStepComplete);
 
-        function noElement() {
-          var bubble = new Walkhub.Bubble(that.controller, null, step);
-          bubble.show();
-        }
-
         if (force || Walkhub.CommandDispatcher.instance().isAutomaticCommand(command)) {
           Walkhub.CommandDispatcher.instance().executeCommand(command, step);
-        } else if (step['highlight']) {
+        } else if (step.highlight) {
           var error = false;
-          Walkhub.Translator.instance().translateOrWait(step['highlight'], {
+          Walkhub.Translator.instance().translateOrWait(step.highlight, {
             success: function (jqobj) {
               if (error) {
                 that.client.suppressError('locator-fail');
@@ -112,7 +114,7 @@
               bubble.show();
             },
             waiting: function (tries, remainingtries) {
-              var message = "The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', step['highlight']);
+              var message = "The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', step.highlight);
               that.client.showError('locator-fail', message);
               error = true;
             },
@@ -146,8 +148,8 @@
   };
 
   Walkhub.Executor.negotiateWalkhubOrigin = function () {
-    if (Walkhub['ProxyOrigin']) {
-      return Walkhub['ProxyOrigin']();
+    if (Walkhub.ProxyOrigin) {
+      return Walkhub.ProxyOrigin();
     }
 
     if (Walkhub.Origin) {
