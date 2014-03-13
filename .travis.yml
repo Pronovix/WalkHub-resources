@@ -1,0 +1,11 @@
+language: node_js
+install: true
+
+node_js:
+  - 1.4.4
+
+before_install:
+  - npm install jshint
+
+script:
+  - jshint ./src/javascript/**/*.js
