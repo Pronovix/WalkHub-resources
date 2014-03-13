@@ -1,0 +1,30 @@
+{
+  "browser"   : true,
+  "curly"     : true,
+  "eqeqeq"    : true,
+  "forin"     : true,
+  "indent"    : 2,
+  "latedef"   : true,
+  "newcap"    : true,
+  "noarg"     : true,
+  "strict"    : true,
+  "trailing"  : true,
+  "undef"     : true,
+  "unused"    : "vars",
+  "loopfunc"  : true,
+  "maxcomplexity": 15,
+  "predef"    : [
+    "Drupal",
+    "drupalSettings",
+    "domready",
+    "jQuery",
+    "_",
+    "matchMedia",
+    "Backbone",
+    "Modernizr",
+    "CKEDITOR",
+    "jqWalkhub",
+    "Walkhub",
+    "console"
+  ]
+}
