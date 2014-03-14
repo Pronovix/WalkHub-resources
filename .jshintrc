@@ -25,6 +25,7 @@
     "CKEDITOR",
     "jqWalkhub",
     "Walkhub",
-    "console"
+    "console",
+    "URI"
   ]
 }

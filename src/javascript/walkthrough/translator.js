@@ -35,20 +35,28 @@
     function translateOrWait() {
       var jqobj = that.translate(locator);
       if (jqobj.length > 0) {
-        callbacks.success && callbacks.success(jqobj);
+        if (callbacks.success) {
+          callbacks.success(jqobj);
+        }
       }
       else if (Walkhub.Context.locatorTranslationCanWait()) {
-        callbacks.waiting && callbacks.waiting(that.tries, remainingtries);
+        if(callbacks.waiting) {
+          callbacks.waiting(that.tries, remainingtries);
+        }
 
         if (that.tries ? (remainingtries > 0) : true) {
           remainingtries--;
           setTimeout(translateOrWait, 500);
         } else {
-          callbacks.giveUp && callbacks.giveUp();
+          if (callbacks.giveUp) {
+            callbacks.giveUp();
+          }
         }
       }
       else {
-        callbacks.giveUp && callbacks.giveUp();
+        if (callbacks.giveUp) {
+          callbacks.giveUp();
+        }
       }
     }
 

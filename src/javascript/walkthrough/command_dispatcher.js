@@ -107,7 +107,7 @@
         .addCommand('open',
           function (step, onStepCompleteCallback) {},
           function (step) {
-            var url = step['arg1'];
+            var url = step.arg1;
             var httpProxy = Walkhub.currentExecutor.getController().getHTTPProxyURL();
             if (httpProxy) {
               var uri = new URI(url);
