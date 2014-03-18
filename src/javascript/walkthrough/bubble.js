@@ -1,4 +1,6 @@
 (function ($, Walkhub, window) {
+  "use strict";
+
   Walkhub.Bubble = function (controller, element, step) {
     this.controller = controller;
     this.element = element;
@@ -6,6 +8,7 @@
     this.extraOptions = {};
     this.extraSetup = function () {};
     this.joyride = null;
+    this.editdialog = null;
   };
 
   Walkhub.Bubble.previous = null;
@@ -77,8 +80,8 @@
             .html('Edit')
             .click(function (event) {
               event.preventDefault();
-              var dialog = new Walkhub.editDialog(that.step);
-              dialog
+              that.editdialog = new Walkhub.editDialog(that.step);
+              that.editdialog
                 .setController(that.controller)
                 .setSubmitCallback(function () {
                   $('.joyride-next-tip, .joyride-normal-tip').show();
@@ -86,6 +89,7 @@
                 .setSuccessCallback(function (step) {
                   $('h5.step-title-' + uniq).html(step.showTitle ? step.title : '');
                   $('p.step-description-' + uniq).html(step.description);
+                  that.editdialog = null;
                 })
                 .open();
               $('.joyride-next-tip, .joyride-normal-tip').hide();
@@ -139,10 +143,10 @@
         $(window).unbind('mousemove.walkhub');
 
         var clickedElement = that.getElementAtEvent(event);
-        console.log(clickedElement);
         var newLocator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
         if (newLocator) {
           that.moveBubble(clickedElement);
+          $('#firstarg', that.editdialog.form).val(newLocator);
         } else {
           that.resetBubble();
         }

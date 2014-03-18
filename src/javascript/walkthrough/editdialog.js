@@ -6,6 +6,7 @@
     this.submit = function () {};
     this.success = function () {};
     this.controller = null;
+    this.form = null;
   };
 
   Walkhub.editDialog.actionHasNoArguments = {
@@ -111,8 +112,8 @@
   Walkhub.editDialog.prototype.open = function () {
     var that = this;
 
-    var form = $('<form><fieldset></fieldset></form>');
-    var fieldset = $('fieldset', form);
+    this.form = $('<form><fieldset></fieldset></form>');
+    var fieldset = $('fieldset', this.form);
 
     $('<label />')
       .attr('for', 'title')
@@ -172,7 +173,7 @@
       .hide()
       .appendTo(fieldset);
 
-    var popularActions = {'click': true, 'type': true, 'select': true};
+    var popularActions = {'click': true, 'type': true, 'select': true, 'open': true};
 
     $('<label />')
       .attr('for', 'action')
@@ -308,7 +309,7 @@
       })
       .change();
 
-    form.submit(function (event) {
+    this.form.submit(function (event) {
       event.preventDefault();
 
       var possibleHighlight = firstarg.val();
@@ -328,7 +329,8 @@
       that.step.arg1 = possibleHighlight;
       that.step.arg2 = secondarg.val();
       that.submit();
-      form.remove();
+      that.form.remove();
+      that.form = null;
       that.controller.updateCurrentStep(that.step, that.success);
     });
 
@@ -355,7 +357,7 @@
       }
     });
 
-    form.appendTo($('.joyride-content-wrapper'));
+    this.form.appendTo($('.joyride-content-wrapper'));
 
     refreshArgs();
   };
