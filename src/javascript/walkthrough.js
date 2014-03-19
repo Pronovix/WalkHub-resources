@@ -8,6 +8,8 @@ if (!window.Walkhub) {
 }
 
 (function (Walkhub, window) {
+  'use strict';
+
   Walkhub.enforcer = function () {
     if (!this.tries) {
       this.tries = 0;
@@ -16,7 +18,7 @@ if (!window.Walkhub) {
       return;
     }
 
-    if (window.document.readyState == 'complete') {
+    if (window.document.readyState === 'complete') {
       if (this.tries > 4) {
         Walkhub.currentExecutor.start();
       } else {
@@ -27,7 +29,7 @@ if (!window.Walkhub) {
     setTimeout(Walkhub.enforcer, 500);
   };
 
-  if (window.parent != window) {
+  if (window.parent !== window) {
     Walkhub.enforcer();
   }
 })(window.Walkhub, window);
