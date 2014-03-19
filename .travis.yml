@@ -8,4 +8,4 @@ before_install:
   - npm install jshint
 
 script:
-  - jshint ./src/javascript/**/*.js
+  - jshint ./src/javascript/**.js
