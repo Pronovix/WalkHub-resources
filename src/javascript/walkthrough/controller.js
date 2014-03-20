@@ -89,13 +89,21 @@
       this.client.log('Last step');
 
       setTimeout(function () {
+
         var share = '';
         for (var sl in Walkhub.SocialSharing) {
           if (Walkhub.SocialSharing.hasOwnProperty(sl)) {
             share += ' ' + Walkhub.SocialSharing[sl](that.walkthrough.url, that.name) + ' ';
           }
         }
-        that.executor.showExitDialog('<p>This is the end of this walkthrough. Liked it? Share it through one of the following services:</p>' + share, {
+
+        var finish_text = '<p>This is the end of this walkthrough. Liked it?</p>';
+        if (that.state.socialSharing === "1") {
+          finish_text += '<p>Share it through one of the following services:</p>';
+          finish_text += share;
+        }
+
+        that.executor.showExitDialog(finish_text, {
           'Finish': finished
         }, function () {
         });
