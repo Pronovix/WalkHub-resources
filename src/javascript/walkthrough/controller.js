@@ -91,9 +91,10 @@
       setTimeout(function () {
 
         var share = '';
+        var url = that.walkthrough.url.replace(new RegExp('%2Fstart$'), '');
         for (var sl in Walkhub.SocialSharing) {
           if (Walkhub.SocialSharing.hasOwnProperty(sl)) {
-            share += ' ' + Walkhub.SocialSharing[sl](that.walkthrough.url, that.name) + ' ';
+            share += ' ' + Walkhub.SocialSharing[sl](url, that.name) + ' ';
           }
         }
 
