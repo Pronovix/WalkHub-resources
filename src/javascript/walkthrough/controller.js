@@ -89,9 +89,10 @@
       this.client.log('Last step');
 
       setTimeout(function () {
+        // Remove trailing "/start" from the url.
+        var url = that.walkthrough.url.replace(new RegExp('(%2F|/)start$'), '');
 
         var share = '';
-        var url = that.walkthrough.url.replace(new RegExp('%2Fstart$'), '');
         for (var sl in Walkhub.SocialSharing) {
           if (Walkhub.SocialSharing.hasOwnProperty(sl)) {
             share += ' ' + Walkhub.SocialSharing[sl](url, that.name) + ' ';
