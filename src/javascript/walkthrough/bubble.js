@@ -291,6 +291,10 @@
 
     tip.hide();
 
+    if (!offset) {
+      return true;
+    }
+
     // check for bottom overflow
     if (offset.top + tipHeight > d.height()) {
       retval = false;
