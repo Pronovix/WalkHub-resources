@@ -1,12 +1,13 @@
 (function ($, Walkhub, window) {
   "use strict";
 
-  Walkhub.editDialog = function (step) {
+  Walkhub.editDialog = function (step, bubbleContentWrapper) {
     this.step = step;
     this.submit = function () {};
     this.success = function () {};
     this.controller = null;
     this.form = null;
+    this.bubbleContentWrapper = bubbleContentWrapper;
   };
 
   Walkhub.editDialog.actionHasNoArguments = {
@@ -357,7 +358,7 @@
       }
     });
 
-    this.form.appendTo($('.joyride-content-wrapper'));
+    this.form.appendTo(this.bubbleContentWrapper);
 
     refreshArgs();
   };

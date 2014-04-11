@@ -12,7 +12,8 @@
       completed: false,
       stepIndex: 0,
       parameters: {},
-      HTTPProxyURL: ''
+      HTTPProxyURL: '',
+      next: []
     };
 
     this.walkthrough = null;
@@ -65,18 +66,29 @@
     this.state.step = null;
     this.state.completed = false;
     this.state.stepIndex = 0;
+    this.state.next = [];
     this.walkthrough = null;
     this.step = null;
     this.client.updateState(this.state);
     this.client.finish();
   };
 
+  Walkhub.Controller.prototype.next = function () {
+    var that = this;
+    this.state.walkthrough = this.state.next.shift();
+    this.state.step = null;
+    this.state.completed = false;
+    this.state.stepIndex = 0;
+    this.walkthrough = null;
+    this.step = null;
+    this.client.updateState(this.state);
+    this.refreshWalkthrough(function () {
+      that.nextStep();
+    });
+  };
+
   Walkhub.Controller.prototype.nextStep = function () {
     var that = this;
-
-    function finished() {
-      that.finish();
-    }
 
     if (!this.state.completed && this.step) {
       this.client.log('Executing incomplete step.');
@@ -105,10 +117,17 @@
           finish_text += share;
         }
 
-        that.executor.showExitDialog(finish_text, {
-          'Finish': finished
-        }, function () {
-        });
+        var buttons = {};
+        buttons.Finish = function () {
+          that.finish();
+        };
+        if (that.state.next && that.state.next.length > 0) {
+          buttons.Next = function () {
+            that.next();
+          };
+        }
+
+        that.executor.showExitDialog(finish_text, buttons);
       }, 100);
       return;
     }

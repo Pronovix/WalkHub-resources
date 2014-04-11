@@ -1,16 +1,10 @@
 // ---------------------
-// Compass include
-// ---------------------
-@import "compass/support"
-@import "compass/utilities/general/clearfix"
-@import "compass/utilities/sprites"
-@import "compass/css3"
-@import "compass/layout"
-
-// ---------------------
 // Mixins include
 // ---------------------
 @import "mixins/mixins"
+
+// Import bubble
+@import "bubble"
 
 // Variables
 =background-gradient
@@ -19,11 +13,7 @@
   $experimental-support-for-svg: true
   @include background-image(linear-gradient(top,  #0063ff 0%,#0055d6 100%))
 
-a.joyride-close-tip,
-.walkthrough-in-progress button.ui-dialog-titlebar-close
-  display: none
-
-span.step-title
+span.wtbubble-step-title
   font-weight: bold
 
 #walkthrough-proxy-message

@@ -48,44 +48,24 @@
 
     setTimeout(function () {
       if (!success) {
-        that.showExitDialog(
-          '<p>This website is associated with another WalkHub. Please make sure to use its own WalkHub to play this Walkthrough.</p>');
+        that.showExitDialog('<p>This website is associated with another WalkHub. Please make sure to use its own WalkHub to play this Walkthrough.</p>');
       }
     }, 1000);
   };
 
-  Walkhub.Executor.prototype.showExitDialog = function (message, buttons, cancel) {
-    var opts = {
-      nextButton: false
-    };
-    if (cancel) {
-      opts.postRideCallback = cancel;
-    }
+  Walkhub.Executor.prototype.showExitDialog = function (message, buttons) {
     var bubble = new Walkhub.Bubble(this.controller, null, {description: message});
-    bubble
-      .setExtraOptions(opts)
-      .setExtraSetupCallback(function () {
-        if (!buttons) {
-          return;
+    bubble.disableNextButton();
+
+    if (buttons) {
+      for (var b in buttons) {
+        if (buttons.hasOwnProperty(b)) {
+          bubble.addButton(b, buttons[b]);
         }
-        for (var text in buttons) {
-          if (buttons.hasOwnProperty(text)) {
-            (function () {
-              var buttonfunc = buttons[text];
-              var button = $('<a />')
-                .attr('href', '#')
-                .addClass('joyride-next-tip')
-                .html(text)
-                .click(function (event) {
-                  event.preventDefault();
-                  buttonfunc();
-                });
-              $('.joyride-content-wrapper').append(button);
-            })();
-          }
-        }
-      })
-      .show();
+      }
+    }
+
+    bubble.show();
   };
 
   Walkhub.Executor.prototype.execute = function (step, force, onStepComplete) {
