@@ -127,7 +127,7 @@
           };
         }
 
-        that.executor.showExitDialog(finish_text, buttons, function () {});
+        that.executor.showExitDialog(finish_text, buttons);
       }, 100);
       return;
     }

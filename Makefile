@@ -4,10 +4,9 @@ debugc = cat
 jquery = src/javascript/jquery.js src/javascript/noconflict.js src/javascript/jquery.cookie.js
 urijs = src/javascript/URI.js
 modernizr = src/javascript/modernizr.mq.js
-joyride = src/javascript/jquery.joyride.js
 app = src/javascript/walkthrough.js src/javascript/walkthrough/*.js src/javascript/walkthrough_start.js
 
-allfiles = $(jquery) $(modernizr) $(joyride) $(urijs) $(app)
+allfiles = $(jquery) $(modernizr) $(urijs) $(app)
 
 all: javascript sass
 
