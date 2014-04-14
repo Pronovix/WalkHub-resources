@@ -81,7 +81,7 @@
       .text('Next')
       .addClass('wtbubble-next')
       .addClass('wtbubble-button')
-      .click(function () {
+      .click(function (event) {
         event.preventDefault();
         that.hide();
         that.controller.nextStep();
