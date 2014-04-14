@@ -26,6 +26,8 @@
     "jqWalkhub",
     "Walkhub",
     "console",
-    "URI"
+    "URI",
+    "require",
+    "__dirname"
   ]
 }
