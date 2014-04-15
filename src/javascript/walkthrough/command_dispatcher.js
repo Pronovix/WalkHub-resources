@@ -47,16 +47,15 @@
   Walkhub.CommandDispatcher.instance = function () {
     if (!this.instanceObject) {
       this.instanceObject = new Walkhub.CommandDispatcher();
-      var clickInit, clickExecute;
 
       this.instanceObject
         .addCommand('click',
-          clickInit = function (step, onStepCompleteCallback) {
+          function (step, onStepCompleteCallback) {
             Walkhub.Translator.instance().translate(step.arg1)
               .unbind('click.walkhub')
               .bind('click.walkhub', onStepCompleteCallback);
           },
-          clickExecute = function (step) {
+          function (step) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
             var raw = element.get(0);
             raw.click();
@@ -77,32 +76,24 @@
         .addCommand('select',
           function (step, onStepCompleteCallback) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
-            if (Walkhub.CommandDispatcher.isElementButtonLike(element)) {
-              clickInit(step, onStepCompleteCallback);
-            } else {
-              element
-                .unbind('change.walkhub')
-                .bind('change.walkhub', onStepCompleteCallback);
-            }
+            element
+              .unbind('change.walkhub')
+              .bind('change.walkhub', onStepCompleteCallback);
           },
           function (step) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
-            if (Walkhub.CommandDispatcher.isElementButtonLike(element)) {
-              clickExecute(step);
-            } else {
-              var sanitizedValue = Walkhub.CommandDispatcher.sanitizeValue(step.arg2);
-              var realValue = null;
-              if (element.get(0).tagName.toLowerCase() === 'select') {
-                element.children().each(function () {
-                  if ($(this).html() === sanitizedValue) {
-                    realValue = $(this).attr('value');
-                  }
-                });
-              }
-              element
-                .val(realValue || sanitizedValue)
-                .change();
+            var sanitizedValue = Walkhub.CommandDispatcher.sanitizeValue(step.arg2);
+            var realValue = null;
+            if (element.get(0).tagName.toLowerCase() === 'select') {
+              element.children().each(function () {
+                if ($(this).html() === sanitizedValue) {
+                  realValue = $(this).attr('value');
+                }
+              });
             }
+            element
+              .val(realValue || sanitizedValue)
+              .change();
           })
         .addCommand('open',
           function (step, onStepCompleteCallback) {},
@@ -128,17 +119,6 @@
     }
 
     return this.instanceObject;
-  };
-
-  Walkhub.CommandDispatcher.isElementButtonLike = function (element) {
-    var proptagname = element.prop('tagName');
-    if (!proptagname) {
-      return false;
-    }
-    var tagname = proptagname.toLowerCase();
-    return tagname === 'a' ||
-      tagname === 'button' ||
-      (tagname === 'input' && element.attr('type').toLowerCase() === 'submit');
   };
 
   Walkhub.CommandDispatcher.sanitizeValue = function (value) {
