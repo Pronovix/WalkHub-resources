@@ -135,6 +135,7 @@
     this.client.log('Loading next step (' + this.state.stepIndex + ')');
     this.state.step = this.walkthrough.steps[this.state.stepIndex];
     this.state.stepIndex++;
+    this.state.completed = false;
     this.client.updateState(this.state);
     this.refreshStep(function () {
       that.client.log('Next step loaded, initalizing.');
