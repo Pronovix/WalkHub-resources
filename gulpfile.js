@@ -76,6 +76,7 @@
   gulp.task('watch', function () {
     gulp.watch('./src', ['clean', 'build']);
     gulp.watch(paths.non_vendor_scripts, ['jshint']);
+    gulp.watch(paths.non_vendor_scripts, ['buildjs']);
   });
 
   gulp.task('default', ['clean', 'build', 'watch']);

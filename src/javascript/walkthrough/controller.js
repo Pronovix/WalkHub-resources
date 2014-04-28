@@ -78,6 +78,16 @@
   };
 
   Walkhub.Controller.prototype.finish = function () {
+    // Log successful walkthrough playing.
+    var play_result = {
+      'uuid': this.state.walkthrough,
+      'time': 0,
+      'result': true,
+      'error_message': ''
+    };
+
+    this.client.send('walkhub-log-play-result', play_result , null, null, 'post');
+
     this.state.walkthrough = null;
     this.state.step = null;
     this.state.completed = false;
