@@ -66,7 +66,7 @@
     this.frame.postMessage(JSON.stringify(data), this.origin);
   };
 
-  Walkhub.Client.prototype.send = function (endpoint, data, success, error) {
+  Walkhub.Client.prototype.send = function (endpoint, data, success, error, method) {
     if (!this.origin) {
       return false;
     }
@@ -77,12 +77,18 @@
       error: error
     };
 
-    this.post({
+    var message = {
       type: 'request',
       ticket: ticket,
       URL: this.baseURL + 'api/v2/' + endpoint,
       data: data
-    });
+    };
+
+    if (method) {
+      message.method = method;
+    }
+
+    this.post(message);
 
     return true;
   };
@@ -115,6 +121,15 @@
 
   Walkhub.Client.prototype.updateState = function (state) {
     this.post({type: 'setState', state: state});
+  };
+
+  Walkhub.Client.prototype.saveStep = function (cmd, arg0, arg1) {
+    this.post({
+      type: 'saveStep',
+      cmd: cmd,
+      arg0: arg0,
+      arg1: arg1
+    });
   };
 
   Walkhub.Client.prototype.finish = function () {

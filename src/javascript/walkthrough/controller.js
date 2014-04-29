@@ -22,19 +22,35 @@
     this.client.setStateChanged(function (_state) {
       that.state = _state;
       that.client.log(['New state', that.state]);
-      if (that.state.walkthrough) {
-        that.refreshWalkthrough(function () {
-          if (that.state.step && !that.state.completed) {
-            that.client.log('Loading step');
-            that.refreshStep(function () {
-              that.initStep();
-            });
-          }
-          else {
-            that.client.log('Empty step');
-            that.nextStep();
-          }
-        });
+      if (that.state.recording) {
+        if (that.state.recordStarted) {
+          Walkhub.Recorder.instance()
+            .setClient(that.client)
+            .setController(that)
+            .setState(that.state)
+            .start();
+        } else {
+          that.state.recordStarted = true;
+          that.client.updateState(that.state);
+          Walkhub.CommandDispatcher.instance().executeCommand('open', {
+            arg1: that.state.recordStartUrl
+          });
+        }
+      } else {
+        if (that.state.walkthrough) {
+          that.refreshWalkthrough(function () {
+            if (that.state.step && !that.state.completed) {
+              that.client.log('Loading step');
+              that.refreshStep(function () {
+                that.initStep();
+              });
+            }
+            else {
+              that.client.log('Empty step');
+              that.nextStep();
+            }
+          });
+        }
       }
     });
 
