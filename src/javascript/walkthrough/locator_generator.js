@@ -51,21 +51,21 @@
       .addGenerator(Walkhub.LocatorGenerator.linkGenerator)
       .addGenerator(Walkhub.LocatorGenerator.idGenerator)
       .addGenerator(Walkhub.LocatorGenerator.nameGenerator)
-      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper('css', Walkhub.LocatorGenerator.cssGenerator))
-      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper('xpath', Walkhub.LocatorGenerator.htmlXpathGenerator))
-      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper('xpath', Walkhub.LocatorGenerator.fullXpathGenerator))
+      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("css", Walkhub.LocatorGenerator.cssGenerator))
+      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("xpath", Walkhub.LocatorGenerator.htmlXpathGenerator))
+      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("xpath", Walkhub.LocatorGenerator.fullXpathGenerator))
     ;
 
     return this.instanceObject;
   };
 
   Walkhub.LocatorGenerator.linkGenerator = function (element) {
-    var proptagname = element.prop('tagName');
+    var proptagname = element.prop("tagName");
     if (!proptagname) {
       return false;
     }
 
-    if (proptagname.toLowerCase() !== 'a') {
+    if (proptagname.toLowerCase() !== "a") {
       return false;
     }
 
@@ -73,11 +73,11 @@
       return false;
     }
 
-    return 'link=' + element.text();
+    return "link=" + element.text();
   };
 
   Walkhub.LocatorGenerator.idGenerator = function (element) {
-    var id = element.attr('id');
+    var id = element.attr("id");
     if (!id) {
       return false;
     }
@@ -86,11 +86,11 @@
       return false;
     }
 
-    return 'id=' + id;
+    return "id=" + id;
   };
 
   Walkhub.LocatorGenerator.nameGenerator = function (element) {
-    var name = element.attr('name');
+    var name = element.attr("name");
     if (!name) {
       return false;
     }
@@ -99,7 +99,7 @@
       return false;
     }
 
-    return 'name=' + name;
+    return "name=" + name;
   };
 
   Walkhub.LocatorGenerator.prefixWrapper = function (prefix, callback) {
@@ -107,7 +107,7 @@
       var result = callback(element);
 
       if (result) {
-        return prefix + '=' + result;
+        return prefix + "=" + result;
       }
 
       return result;
@@ -120,12 +120,12 @@
     var node = element.get(0);
     var current = node;
     var subPath = Walkhub.LocatorGenerator.getCSSSubpath(node);
-    while (!Walkhub.LocatorGenerator.isLocatorEquals('css=' + subPath, node) && current.nodeName.toLowerCase() !== 'html') {
-      subPath = Walkhub.LocatorGenerator.getCSSSubpath(current.parentNode) + ' > ' + subPath;
+    while (!Walkhub.LocatorGenerator.isLocatorEquals("css=" + subPath, node) && current.nodeName.toLowerCase() !== "html") {
+      subPath = Walkhub.LocatorGenerator.getCSSSubpath(current.parentNode) + " > " + subPath;
       current = current.parentNode;
     }
 
-    if (Walkhub.LocatorGenerator.isLocatorEquals('css=' + subPath, node)) {
+    if (Walkhub.LocatorGenerator.isLocatorEquals("css=" + subPath, node)) {
       return subPath;
     }
 
@@ -134,27 +134,27 @@
 
 
   Walkhub.LocatorGenerator.getCSSSubpath = function (node) {
-    var cssAttributes = ['id', 'name', 'class', 'type', 'alt', 'title', 'value'];
+    var cssAttributes = ["id", "name", "class", "type", "alt", "title", "value"];
     for (var i in cssAttributes) {
       if (cssAttributes.hasOwnProperty(i)) {
         var attr = cssAttributes[i];
         var value = node.getAttribute(attr);
-        if (value && value.indexOf('walkthrough') === -1) {
-          if (attr === 'id') {
-            return '#' + value;
+        if (value && value.indexOf("walkthrough") === -1) {
+          if (attr === "id") {
+            return "#" + value;
           }
-          if (attr === 'class') {
-            return node.nodeName.toLowerCase() + '.' + value.replace(' ', '.').replace('..', '.');
+          if (attr === "class") {
+            return node.nodeName.toLowerCase() + "." + value.replace(" ", ".").replace("..", ".");
           }
 
-          return node.nodeName.toLowerCase() + '[' + attr + '="' + value + '"]';
+          return node.nodeName.toLowerCase() + "[" + attr + "=\"" + value + "\"]";
         }
       }
     }
 
     var nodeNumber = Walkhub.LocatorGenerator.getNodeNumber(node);
     if (nodeNumber) {
-      return node.nodeName.toLowerCase() + ':nth-of-type(' + nodeNumber + ')';
+      return node.nodeName.toLowerCase() + ":nth-of-type(" + nodeNumber + ")";
     }
 
     return node.nodeName.toLowerCase();
@@ -182,25 +182,25 @@
     var node = element.get(0);
     var nodeName = node.nodeName.toLowerCase();
 
-    if (nodeName === 'html') {
-      return '//html';
+    if (nodeName === "html") {
+      return "//html";
     }
 
     var parent = Walkhub.LocatorGenerator.getXpath(node.parentNode);
 
-    if (parent.indexOf("']") > -1) {
+    if (parent.indexOf("\"]") > -1) {
       var text = node.textContent.replace(/[']/gm, "&quot;");
       if (text && text.length < 32) {
-        var attempt = parent.substr(0, parent.indexOf("']") + 2) + '//' + nodeName;
+        var attempt = parent.substr(0, parent.indexOf("\"]") + 2) + "//" + nodeName;
 
         if (Walkhub.LocatorGenerator.hasNonstandardWhitespace(attempt)) {
-          attempt += "[normalize-space(.)='" +
-            Walkhub.LocatorGenerator.normalizeWhitespace(text) + "']";
+          attempt += "[normalize-space(.)=\"" +
+            Walkhub.LocatorGenerator.normalizeWhitespace(text) + "\"]";
         } else {
-          attempt += "[.='" + text + "']";
+          attempt += "[.=\"" + text + "\"]";
         }
 
-        if (Walkhub.LocatorGenerator.isLocatorEquals('xpath=' + attempt, node)) {
+        if (Walkhub.LocatorGenerator.isLocatorEquals("xpath=" + attempt, node)) {
           return attempt;
         }
       }
@@ -226,35 +226,35 @@
     var nodeName = node.nodeName.toLowerCase();
 
     if (node.id && document.getElementById(node.id) === node) {
-      return '//' + nodeName + "[@id='" + node.id + "']";
+      return "//" + nodeName + "[@id=\"" + node.id + "\"]";
     }
 
     var className = node.className;
-    if (className && className.indexOf(' ') === -1 && document.getElementsByClassName(className).length === 1) {
-      return '//' + nodeName + "[@class='" + className + "]'";
+    if (className && className.indexOf(" ") === -1 && document.getElementsByClassName(className).length === 1) {
+      return "//" + nodeName + "[@class=\"" + className + "]\"";
     }
 
-    if (nodeName === 'label' && node.hasAttribute('for')) {
-      return "//label[@for='" + node.getAttribute('for') + "']";
+    if (nodeName === "label" && node.hasAttribute("for")) {
+      return "//label[@for=\"" + node.getAttribute("for") + "\"]";
     }
 
     if (Walkhub.LocatorGenerator.isTopReached(node)) {
-      return '//' + Walkhub.LocatorGenerator.getChildSelector(node);
+      return "//" + Walkhub.LocatorGenerator.getChildSelector(node);
     }
 
-    return Walkhub.LocatorGenerator.getXpath(node.parentNode) + '/' + Walkhub.LocatorGenerator.getChildSelector(node);
+    return Walkhub.LocatorGenerator.getXpath(node.parentNode) + "/" + Walkhub.LocatorGenerator.getChildSelector(node);
   };
 
   Walkhub.LocatorGenerator.getFullXpath = function (node) {
     if (Walkhub.LocatorGenerator.isTopReached(node)) {
-      return '//' + Walkhub.LocatorGenerator.getChildSelector(node);
+      return "//" + Walkhub.LocatorGenerator.getChildSelector(node);
     } else {
-      return Walkhub.LocatorGenerator.getFullXpath(node.parentNode) + '/' + Walkhub.LocatorGenerator.getChildSelector(node);
+      return Walkhub.LocatorGenerator.getFullXpath(node.parentNode) + "/" + Walkhub.LocatorGenerator.getChildSelector(node);
     }
   };
 
   Walkhub.LocatorGenerator.isTopReached = function (node) {
-    return node.nodeName === 'body' || node.nodeName === 'html' || !node.parentNode || node.parentNode.nodeName.toLowerCase() === 'body';
+    return node.nodeName === "body" || node.nodeName === "html" || !node.parentNode || node.parentNode.nodeName.toLowerCase() === "body";
   };
 
   Walkhub.LocatorGenerator.getChildSelector = function (node) {
@@ -282,7 +282,7 @@
       }
     }
 
-    return node.nodeName.toLowerCase() + '[' + count + ']';
+    return node.nodeName.toLowerCase() + "[" + count + "]";
   };
 
   Walkhub.LocatorGenerator.hashiness = function (str) {
@@ -294,7 +294,7 @@
 
     for (var i in hashlengths) {
       if (hashlengths.hasOwnProperty(i)) {
-        if (str.match(new RegExp('[0-9a-f]{' + hashlengths[i] + '}', 'gi'))) {
+        if (str.match(new RegExp("[0-9a-f]{" + hashlengths[i] + "}", "gi"))) {
           return true;
         }
       }

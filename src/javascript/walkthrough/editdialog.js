@@ -32,67 +32,67 @@
   };
 
   Walkhub.editDialog.actionNotLocatorBased = {
-    addLocationStrategy: 'strategy name',
-    addScript: 'script content',
-    allowNativeXpath: 'allow (boolean)',
-    answerOnNextPrompt: 'answer',
-    captureEntirePageScreenshot: 'filename',
-    createCookie: 'name-value pair',
-    deleteCookie: 'name',
-    echo: 'message',
-    ignoreAttributesWithoutValue: 'ignore (boolean)',
-    open: 'url',
-    openWindow: 'url',
-    pause: 'wait time',
-    removeScript: 'script tag id',
-    rollup: 'rollup name',
-    runScript: 'script',
-    selectPopUp: 'window id',
-    selectWindow: 'window id',
-    setBrowserLogLevel: 'log level',
-    setMouseSpeed: 'pixels',
-    setSpeed: 'value',
-    setTimeout: 'value',
-    store: 'expression',
-    useXpathLibrary: 'library name',
-    waitForCondition: 'script',
-    waitForFrameToLoad: 'frame address',
-    waitForPageToLoad: 'timeout',
-    waitForPopUp: 'window id'
+    addLocationStrategy: "strategy name",
+    addScript: "script content",
+    allowNativeXpath: "allow (boolean)",
+    answerOnNextPrompt: "answer",
+    captureEntirePageScreenshot: "filename",
+    createCookie: "name-value pair",
+    deleteCookie: "name",
+    echo: "message",
+    ignoreAttributesWithoutValue: "ignore (boolean)",
+    open: "url",
+    openWindow: "url",
+    pause: "wait time",
+    removeScript: "script tag id",
+    rollup: "rollup name",
+    runScript: "script",
+    selectPopUp: "window id",
+    selectWindow: "window id",
+    setBrowserLogLevel: "log level",
+    setMouseSpeed: "pixels",
+    setSpeed: "value",
+    setTimeout: "value",
+    store: "expression",
+    useXpathLibrary: "library name",
+    waitForCondition: "script",
+    waitForFrameToLoad: "frame address",
+    waitForPageToLoad: "timeout",
+    waitForPopUp: "window id"
   };
 
   Walkhub.editDialog.actionSecondArguments = {
-    addLocationStrategy: 'function definition',
-    addScript: 'script tag id',
-    addSelection: 'option locator',
-    assignId: 'identifier',
-    captureEntirePageScreenshot: 'kwargs',
-    clickAt: 'coordinates',
-    contextMenuAt: 'coordinates',
-    createCookie: 'options',
-    deleteCookie: 'options',
-    doubleClickAt: 'coordinates',
-    dragAndDrop: 'movements',
-    fireEvent: 'event name',
-    keyDown: 'key sequence',
-    keyPress: 'key sequence',
-    keyUp: 'key sequence',
-    mouseDownAt: 'coordinates',
-    mouseDownRightAt: 'coordinates',
-    mouseMoveAt: 'coordinates',
-    mouseUpAt: 'coordinates',
-    mouseUpRightAt: 'coordinates',
-    openWindow: 'window id',
-    removeSelection: 'option locator',
-    rollup: 'kwargs',
-    select: 'option locator',
-    setCursorPosition: 'position',
-    store: 'variable name',
-    type: 'value',
-    typeKeys: 'value',
-    waitForCondition: 'timeout',
-    waitForFrameToLoad: 'timeout',
-    waitForPopUp: 'timeout'
+    addLocationStrategy: "function definition",
+    addScript: "script tag id",
+    addSelection: "option locator",
+    assignId: "identifier",
+    captureEntirePageScreenshot: "kwargs",
+    clickAt: "coordinates",
+    contextMenuAt: "coordinates",
+    createCookie: "options",
+    deleteCookie: "options",
+    doubleClickAt: "coordinates",
+    dragAndDrop: "movements",
+    fireEvent: "event name",
+    keyDown: "key sequence",
+    keyPress: "key sequence",
+    keyUp: "key sequence",
+    mouseDownAt: "coordinates",
+    mouseDownRightAt: "coordinates",
+    mouseMoveAt: "coordinates",
+    mouseUpAt: "coordinates",
+    mouseUpRightAt: "coordinates",
+    openWindow: "window id",
+    removeSelection: "option locator",
+    rollup: "kwargs",
+    select: "option locator",
+    setCursorPosition: "position",
+    store: "variable name",
+    type: "value",
+    typeKeys: "value",
+    waitForCondition: "timeout",
+    waitForFrameToLoad: "timeout",
+    waitForPopUp: "timeout"
   };
 
   Walkhub.editDialog.prototype.setSubmitCallback = function (submit) {
@@ -113,54 +113,54 @@
   Walkhub.editDialog.prototype.open = function () {
     var that = this;
 
-    this.form = $('<form><fieldset></fieldset></form>');
-    var fieldset = $('fieldset', this.form);
+    this.form = $("<form><fieldset></fieldset></form>");
+    var fieldset = $("fieldset", this.form);
 
-    $('<label />')
-      .attr('for', 'title')
-      .html('Title')
+    $("<label />")
+      .attr("for", "title")
+      .html("Title")
       .appendTo(fieldset);
-    var title = $('<input />')
-      .attr('type', 'textfield')
-      .attr('name', 'title')
-      .attr('id', 'title')
+    var title = $("<input />")
+      .attr("type", "textfield")
+      .attr("name", "title")
+      .attr("id", "title")
       .val(this.step.titleRaw)
       .appendTo(fieldset);
 
-    $('<label />')
-      .attr('for', 'description')
-      .html('Description')
+    $("<label />")
+      .attr("for", "description")
+      .html("Description")
       .appendTo(fieldset);
 
-    var description = $('<textarea />')
+    var description = $("<textarea />")
       .val(this.step.descriptionRaw)
-      .attr('name', 'description')
-      .attr('id', 'description')
+      .attr("name", "description")
+      .attr("id", "description")
       .appendTo(fieldset);
 
-    var suggestionwrapper = $('<div />')
-      .attr('class', 'suggestions')
+    var suggestionwrapper = $("<div />")
+      .attr("class", "suggestions")
       .appendTo(fieldset)
       .hide();
 
-    $('<label />')
-      .attr('for', 'showtitle')
-      .html('Show title')
+    $("<label />")
+      .attr("for", "showtitle")
+      .html("Show title")
       .appendTo(fieldset);
 
-    var showtitle = $('<input />')
-      .attr('type', 'checkbox')
-      .attr('name', 'showtitle')
-      .attr('id', 'showtitle')
+    var showtitle = $("<input />")
+      .attr("type", "checkbox")
+      .attr("name", "showtitle")
+      .attr("id", "showtitle")
       .appendTo(fieldset);
 
     if (this.step.showTitle) {
-      showtitle.attr('checked', 'checked');
+      showtitle.attr("checked", "checked");
     }
 
-    $('<a />')
-      .html('Advanced settings')
-      .attr('href', '#')
+    $("<a />")
+      .html("Advanced settings")
+      .attr("href", "#")
       .click(function (event) {
         event.preventDefault();
 
@@ -168,85 +168,85 @@
 
         return false;
       })
-      .appendTo($('<p />').appendTo(fieldset));
+      .appendTo($("<p />").appendTo(fieldset));
 
-    var advancedSettings = $('<fieldset />')
+    var advancedSettings = $("<fieldset />")
       .hide()
       .appendTo(fieldset);
 
-    var popularActions = {'click': true, 'type': true, 'select': true, 'open': true};
+    var popularActions = {"click": true, "type": true, "select": true, "open": true};
 
-    $('<label />')
-      .attr('for', 'action')
-      .html('Action')
+    $("<label />")
+      .attr("for", "action")
+      .html("Action")
       .appendTo(advancedSettings);
 
-    var actions = $('<select />')
-      .attr('name', 'action')
-      .attr('id', 'action')
+    var actions = $("<select />")
+      .attr("name", "action")
+      .attr("id", "action")
       .appendTo(advancedSettings);
 
     for (var act in popularActions) {
       if (popularActions.hasOwnProperty(act)) {
-        $('<option />')
-          .attr('value', act)
+        $("<option />")
+          .attr("value", act)
           .text(act)
           .appendTo(actions);
       }
     }
 
-    $('<option />')
-      .attr('value', '')
-      .text('other...')
+    $("<option />")
+      .attr("value", "")
+      .text("other...")
       .appendTo(actions);
 
-    var otherAction = $('<input />')
-      .attr('name', 'otheraction')
-      .attr('id', 'otheraction')
-      .attr('type', 'textfield')
+    var otherAction = $("<input />")
+      .attr("name", "otheraction")
+      .attr("id", "otheraction")
+      .attr("type", "textfield")
       .appendTo(advancedSettings);
 
     if (popularActions[this.step.pureCommand]) {
       actions.val(this.step.pureCommand);
-      otherAction.val('');
+      otherAction.val("");
     } else {
-      actions.val('');
+      actions.val("");
       otherAction.val(this.step.pureCommand);
     }
 
-    var firstarglabel = $('<label />')
-      .attr('for', 'firstarg')
+    var firstarglabel = $("<label />")
+      .attr("for", "firstarg")
       .appendTo(advancedSettings);
 
-    var firstarg = $('<input />')
+    var firstarg = $("<input />")
       .val(this.step.arg1)
-      .attr('type', 'textfield')
-      .attr('name', 'firstarg')
-      .attr('id', 'firstarg')
+      .attr("type", "textfield")
+      .attr("name", "firstarg")
+      .attr("id", "firstarg")
       .appendTo(advancedSettings);
 
-    var secondarglabel = $('<label />')
-      .attr('for', 'secondarg')
+    var secondarglabel = $("<label />")
+      .attr("for", "secondarg")
       .appendTo(advancedSettings);
 
-    var secondarg = $('<input />')
+    var secondarg = $("<input />")
       .val(this.step.arg2)
-      .attr('type', 'textfield')
-      .attr('name', 'secondarg')
-      .attr('id', 'secondarg')
+      .attr("type", "textfield")
+      .attr("name", "secondarg")
+      .attr("id", "secondarg")
       .appendTo(advancedSettings);
 
-    $('<hr />')
+    $("<hr />")
       .appendTo(fieldset);
 
-    $('<input />')
-      .attr('type', 'submit')
-      .val('Save')
+    $("<input />")
+      .attr("type", "submit")
+      .val("Save")
       .appendTo(fieldset);
 
-    var movebutton = $('<input />')
-      .attr('type', 'submit')
-      .val('Move')
+    var movebutton = $("<input />")
+      .attr("type", "submit")
+      .val("Move")
       .appendTo(fieldset)
       .click(function (event) {
         event.preventDefault();
@@ -280,7 +280,7 @@
         firstarglabel.html(Walkhub.editDialog.actionNotLocatorBased[action]);
         movebutton.hide();
       } else {
-        firstarglabel.html('Locator');
+        firstarglabel.html("Locator");
         movebutton.show();
       }
 
@@ -317,7 +317,7 @@
       var action = getAction();
 
       if (Walkhub.editDialog.actionHasNoArguments[action]) {
-        that.step.highlight = '';
+        that.step.highlight = "";
       } else if (!Walkhub.editDialog.actionNotLocatorBased[action]) {
         that.step.highlight = possibleHighlight;
       }
@@ -326,7 +326,7 @@
       that.step.descriptionRaw = description.val();
       that.step.showTitle = showtitle.get(0).checked;
       that.step.pureCommand = action;
-      that.step.command = that.step.andWait ? that.step.pureCommand + 'AndWait' : that.step.pureCommand;
+      that.step.command = that.step.andWait ? that.step.pureCommand + "AndWait" : that.step.pureCommand;
       that.step.arg1 = possibleHighlight;
       that.step.arg2 = secondarg.val();
       that.submit();
@@ -336,23 +336,23 @@
     });
 
     var querystring =
-      'command=' + encodeURIComponent(this.step.command) + '&' +
-        'arg1=' + encodeURIComponent(this.step.arg1) + '&' +
-        'arg2=' + encodeURIComponent(this.step.arg2);
-    this.controller.client.send('walkhub-step-suggestion?' + querystring, null, function (data) {
+      "command=" + encodeURIComponent(this.step.command) + "&" +
+        "arg1=" + encodeURIComponent(this.step.arg1) + "&" +
+        "arg2=" + encodeURIComponent(this.step.arg2);
+    this.controller.client.send("walkhub-step-suggestion?" + querystring, null, function (data) {
       suggestionwrapper
         .show()
-        .append($('<p/>').text('Suggestions: '));
+        .append($("<p/>").text("Suggestions: "));
       for (var i in data) {
         if (data.hasOwnProperty(i)) {
-          $('<p />')
+          $("<p />")
             .text(data[i])
             .click(function (event) {
               event.preventDefault();
               description.val($(this).text());
             })
-            .css('cursor', 'pointer')
-            .css('font-size', 'small')
+            .css("cursor", "pointer")
+            .css("font-size", "small")
             .appendTo(suggestionwrapper);
         }
       }

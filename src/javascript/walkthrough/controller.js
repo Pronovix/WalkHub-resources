@@ -1,5 +1,5 @@
 (function ($, Walkhub, window) {
-  'use strict';
+  "use strict";
 
   Walkhub.Controller = function (client, executor, logger) {
     var that = this;
@@ -13,7 +13,7 @@
       completed: false,
       stepIndex: 0,
       parameters: {},
-      HTTPProxyURL: '',
+      HTTPProxyURL: "",
       next: []
     };
 
@@ -22,7 +22,7 @@
 
     this.client.setStateChanged(function (_state) {
       that.state = _state;
-      that.client.log(['New state', that.state]);
+      that.client.log(["New state", that.state]);
       if (that.state.recording) {
         if (that.state.recordStarted) {
           Walkhub.Recorder.instance()
@@ -33,7 +33,7 @@
         } else {
           that.state.recordStarted = true;
           that.client.updateState(that.state);
-          Walkhub.CommandDispatcher.instance().executeCommand('open', {
+          Walkhub.CommandDispatcher.instance().executeCommand("open", {
             arg1: that.state.recordStartUrl
           });
         }
@@ -41,13 +41,13 @@
         if (that.state.walkthrough) {
           that.refreshWalkthrough(function () {
             if (that.state.step && !that.state.completed) {
-              that.client.log('Loading step');
+              that.client.log("Loading step");
               that.refreshStep(function () {
                 that.initStep();
               });
             }
             else {
-              that.client.log('Empty step');
+              that.client.log("Empty step");
               that.nextStep();
             }
           });
@@ -64,16 +64,16 @@
 
   Walkhub.Controller.prototype.initStep = function () {
     var that = this;
-    this.client.log('Step initialization started.');
+    this.client.log("Step initialization started.");
     this.state.completed = false;
     this.client.updateState(this.state);
     this.executor.execute(this.step, false, function () {
       that.state.completed = true;
       that.client.updateState(that.state);
-      that.client.log('Step completed');
+      that.client.log("Step completed");
     });
     if (Walkhub.CommandDispatcher.instance().isAutomaticCommand(this.step.pureCommand)) {
-      this.client.log('Automatically executing step.');
+      this.client.log("Automatically executing step.");
       this.nextStep();
     }
   };
@@ -110,29 +110,29 @@
     var that = this;
 
     if (!this.state.completed && this.step) {
-      this.client.log('Executing incomplete step.');
+      this.client.log("Executing incomplete step.");
       this.state.completed = true;
       this.client.updateState(this.state);
       this.executor.execute(this.step, true);
     }
 
     if (this.walkthrough.steps.length === this.state.stepIndex) { // Last step
-      this.client.log('Last step');
+      this.client.log("Last step");
 
       setTimeout(function () {
         // Remove trailing "/start" from the url.
-        var url = that.walkthrough.url.replace(new RegExp('(%2F|/)start$'), '');
+        var url = that.walkthrough.url.replace(new RegExp("(%2F|/)start$"), "");
 
-        var share = '';
+        var share = "";
         for (var sl in Walkhub.SocialSharing) {
           if (Walkhub.SocialSharing.hasOwnProperty(sl)) {
-            share += ' ' + Walkhub.SocialSharing[sl](url, that.name) + ' ';
+            share += " " + Walkhub.SocialSharing[sl](url, that.name) + " ";
           }
         }
 
-        var finish_text = '<p>This is the end of this walkthrough. Liked it?</p>';
+        var finish_text = "<p>This is the end of this walkthrough. Liked it?</p>";
         if (that.state.socialSharing === "1") {
-          finish_text += '<p>Share it through one of the following services:</p>';
+          finish_text += "<p>Share it through one of the following services:</p>";
           finish_text += share;
         }
 
@@ -151,26 +151,26 @@
       return;
     }
 
-    this.client.log('Loading next step (' + this.state.stepIndex + ')');
+    this.client.log("Loading next step (" + this.state.stepIndex + ")");
     this.state.step = this.walkthrough.steps[this.state.stepIndex];
     this.state.stepIndex++;
     this.state.completed = false;
     this.client.updateState(this.state);
     this.refreshStep(function () {
-      that.client.log('Next step loaded, initalizing.');
+      that.client.log("Next step loaded, initalizing.");
       that.initStep();
     });
   };
 
   Walkhub.Controller.prototype.updateCurrentStep = function (step, callback) {
     var that = this;
-    console.log(['Updating step', step]);
-    this.client.send('walkhub-step/' + this.state.step, step, function (data) {
-      console.log(['Updated data', data]);
+    console.log(["Updating step", step]);
+    this.client.send("walkhub-step/" + this.state.step, step, function (data) {
+      console.log(["Updated data", data]);
       that.step = data;
       callback(data);
     }, function () {
-      that.client.showError('updateCurrentStep', 'Updating the step failed.');
+      that.client.showError("updateCurrentStep", "Updating the step failed.");
     });
   };
 
@@ -179,9 +179,9 @@
     this.walkthrough = null;
     this.client.updateState(this.state);
     this.step = null;
-    this.client.send('walkhub-walkthrough/' + this.state.walkthrough, null, function (data) {
+    this.client.send("walkhub-walkthrough/" + this.state.walkthrough, null, function (data) {
       that.walkthrough = data;
-      that.client.log(['Walkthrough loaded', that.walkthrough]);
+      that.client.log(["Walkthrough loaded", that.walkthrough]);
       if (callback) {
         callback(data);
       }
@@ -191,9 +191,9 @@
   Walkhub.Controller.prototype.refreshStep = function (callback) {
     var that = this;
     this.step = null;
-    this.client.send('walkhub-step/' + this.state.step, null, function (data) {
+    this.client.send("walkhub-step/" + this.state.step, null, function (data) {
       that.step = that.processStep(data);
-      that.client.log(['Step loaded', that.step]);
+      that.client.log(["Step loaded", that.step]);
       if (callback) {
         callback(data);
       }
@@ -201,7 +201,7 @@
   };
 
   Walkhub.Controller.prototype.processStep = function (step) {
-    var props = ['arg1', 'arg2', 'highlight', 'description'];
+    var props = ["arg1", "arg2", "highlight", "description"];
 
     for (var parameter in this.state.parameters) {
       if (this.state.parameters.hasOwnProperty(parameter)) {
@@ -209,7 +209,7 @@
           if (props.hasOwnProperty(prop)) {
             prop = props[prop];
             if (step[prop]) {
-              step[prop] = step[prop].replace('[' + parameter + ']', this.state.parameters[parameter]);
+              step[prop] = step[prop].replace("[" + parameter + "]", this.state.parameters[parameter]);
             }
           }
         }

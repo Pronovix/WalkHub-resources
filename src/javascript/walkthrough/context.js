@@ -1,16 +1,16 @@
 (function ($, Walkhub, window) {
-  'use strict';
+  "use strict";
 
   Walkhub.Context = {
     MAXIMUM_ZINDEX: 2147483647,
     fullscreen: false,
     mobileBreakpoint: 479,
     iOS:
-      window.navigator.platform === 'iPad' ||
-      window.navigator.platform === 'iPad Simulator' ||
-      window.navigator.platform === 'iPhone' ||
-      window.navigator.platform === 'iPhone Simulator' ||
-      window.navigator.platform === 'iPod',
+      window.navigator.platform === "iPad" ||
+      window.navigator.platform === "iPad Simulator" ||
+      window.navigator.platform === "iPhone" ||
+      window.navigator.platform === "iPhone Simulator" ||
+      window.navigator.platform === "iPod",
     isUnloading: function () {
       return !!Walkhub.Context.isUnloading.unloading;
     },
@@ -19,7 +19,7 @@
         return;
       }
 
-      window.addEventListener('beforeunload', function () {
+      window.addEventListener("beforeunload", function () {
         Walkhub.Context.isUnloading.unloading = true;
       });
 

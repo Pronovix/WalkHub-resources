@@ -13,6 +13,7 @@
   "unused"    : "vars",
   "loopfunc"  : true,
   "maxcomplexity": 15,
+  "quotmark": "double",
   "predef"    : [
     "Drupal",
     "drupalSettings",

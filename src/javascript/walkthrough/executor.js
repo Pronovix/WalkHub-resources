@@ -26,12 +26,12 @@
 
     function pingPongServer(event) {
       if (that.client) {
-        window.removeEventListener('message', pingPongServer);
+        window.removeEventListener("message", pingPongServer);
         return;
       }
 
       var data = JSON.parse(event.data);
-      if (data.type === 'pong') {
+      if (data.type === "pong") {
         success = true;
         that.client = new Walkhub.Client(event.source, event.origin);
         that.proxy = new Walkhub.ProxyServer(event.source, event.origin);
@@ -39,10 +39,10 @@
         that.controller = new Walkhub.Controller(that.client, that, that.logger);
 
         that.logger.startWalkthrough();
-        window.removeEventListener('message', pingPongServer);
+        window.removeEventListener("message", pingPongServer);
       }
     }
-    window.addEventListener('message', pingPongServer);
+    window.addEventListener("message", pingPongServer);
 
     if (window.parent && window.parent !== window) {
       Walkhub.Executor.ping(window.parent, window.location.origin);
@@ -51,7 +51,7 @@
 
     setTimeout(function () {
       if (!success) {
-        that.showExitDialog('<p>This website is associated with another WalkHub. Please make sure to use its own WalkHub to play this Walkthrough.</p>');
+        that.showExitDialog("<p>This website is associated with another WalkHub. Please make sure to use its own WalkHub to play this Walkthrough.</p>");
       }
     }, 1000);
   };
@@ -91,14 +91,14 @@
           Walkhub.Translator.instance().translateOrWait(step.highlight, {
             success: function (jqobj) {
               if (error) {
-                that.client.suppressError('locator-fail');
+                that.client.suppressError("locator-fail");
               }
               var bubble = new Walkhub.Bubble(that.controller, jqobj, step);
               bubble.show();
             },
             waiting: function (tries, remainingtries) {
-              var message = "The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', step.highlight);
-              that.client.showError('locator-fail', message);
+              var message = "The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace("[locator]", step.highlight);
+              that.client.showError("locator-fail", message);
               error = true;
               that.logger.logResult(that.controller.state, false, "locator-fail: [locator]".replace("[locator]", step.highlight));
             },
@@ -108,8 +108,8 @@
           noElement();
         }
       } else {
-        that.client.showError('command-not-supported',
-          'The Selenium command "[command]" is not supported.'.replace('[command]', command));
+        that.client.showError("command-not-supported",
+          "The Selenium command '[command]' is not supported.".replace("[command]", command));
         that.logger.logResult(that.controller.state, false, "command-not-supported: [command]".replace("[command]", command));
       }
     }, 0);
@@ -128,7 +128,7 @@
   };
 
   Walkhub.Executor.ping = function (source, origin) {
-    var message = JSON.stringify({type: 'ping', origin: window.location.origin});
+    var message = JSON.stringify({type: "ping", origin: window.location.origin});
     source.postMessage(message, origin);
   };
 
