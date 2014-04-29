@@ -128,6 +128,7 @@
             .attr('href', '#')
             .addClass('wtbubble-extrabutton')
             .addClass('wtbubble-button')
+            .addClass('wtbubble-' + btn.toLowerCase().replace(/\s/g, "-"))
             .html(btn)
             .click(function (event) {
               event.preventDefault();

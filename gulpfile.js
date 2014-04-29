@@ -10,20 +10,31 @@
   var gulpif = require('gulp-if');
   var compass = require('gulp-compass');
   var plumber = require('gulp-plumber');
+  var jshint = require('gulp-jshint');
 
   var paths = {
-    scripts: [
+    vendor_scripts: [
       "src/javascript/jquery.js",
       "src/javascript/noconflict.js",
       "src/javascript/jquery.cookie.js",
       "src/javascript/URI.js",
       "src/javascript/modernizr.mq.js",
+    ],
+    non_vendor_scripts: [
       "src/javascript/walkthrough.js",
       "src/javascript/walkthrough/*.js",
       "src/javascript/walkthrough_start.js"
     ],
     sass: ["src/sass/walkthrough.sass"]
   };
+
+  paths.scripts = paths.vendor_scripts.concat(paths.non_vendor_scripts);
+
+  gulp.task('jshint', function () {
+    return gulp.src(paths.non_vendor_scripts)
+      .pipe(jshint())
+      .pipe(jshint.reporter('default'));
+  });
 
   gulp.task('buildjs', function () {
     return gulp.src(paths.scripts)
@@ -60,6 +71,7 @@
 
   gulp.task('watch', function () {
     gulp.watch('./src', ['clean', 'build']);
+    gulp.watch(paths.non_vendor_scripts, ['jshint']);
   });
 
   gulp.task('default', ['clean', 'build', 'watch']);
