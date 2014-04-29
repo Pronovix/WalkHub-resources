@@ -62,6 +62,10 @@
     return this.state.HTTPProxyURL;
   };
 
+  Walkhub.Controller.prototype.getEditLink = function () {
+    return this.state.editLink;
+  };
+
   Walkhub.Controller.prototype.initStep = function () {
     var that = this;
     this.client.log("Step initialization started.");
