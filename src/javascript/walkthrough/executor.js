@@ -35,7 +35,10 @@
         success = true;
         that.client = new Walkhub.Client(event.source, event.origin);
         that.proxy = new Walkhub.ProxyServer(event.source, event.origin);
-        that.controller = new Walkhub.Controller(that.client, that);
+        that.logger = new Walkhub.Logger(that.client);
+        that.controller = new Walkhub.Controller(that.client, that, that.logger);
+
+        that.logger.startWalkthrough();
         window.removeEventListener('message', pingPongServer);
       }
     }
@@ -97,6 +100,7 @@
               var message = "The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', step.highlight);
               that.client.showError('locator-fail', message);
               error = true;
+              that.logger.logResult(that.controller.state, false, "locator-fail: [locator]".replace("[locator]", step.highlight));
             },
             giveUp: noElement
           });
@@ -106,6 +110,7 @@
       } else {
         that.client.showError('command-not-supported',
           'The Selenium command "[command]" is not supported.'.replace('[command]', command));
+        that.logger.logResult(that.controller.state, false, "command-not-supported: [command]".replace("[command]", command));
       }
     }, 0);
   };

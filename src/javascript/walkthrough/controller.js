@@ -1,11 +1,12 @@
 (function ($, Walkhub, window) {
   'use strict';
 
-  Walkhub.Controller = function (client, executor) {
+  Walkhub.Controller = function (client, executor, logger) {
     var that = this;
 
     this.client = client;
     this.executor = executor;
+    this.logger = logger;
     this.state = {
       walkthrough: null,
       step: null,
@@ -78,15 +79,7 @@
   };
 
   Walkhub.Controller.prototype.finish = function () {
-    // Log successful walkthrough playing.
-    var play_result = {
-      'uuid': this.state.walkthrough,
-      'time': 0,
-      'result': true,
-      'error_message': ''
-    };
-
-    this.client.send('walkhub-log-play-result', play_result , null, null, 'post');
+    this.logger.logResult(this.state, true);
 
     this.state.walkthrough = null;
     this.state.step = null;

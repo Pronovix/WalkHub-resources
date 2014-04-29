@@ -12391,11 +12391,12 @@ if (!window.Walkhub) {
 (function ($, Walkhub, window) {
   'use strict';
 
-  Walkhub.Controller = function (client, executor) {
+  Walkhub.Controller = function (client, executor, logger) {
     var that = this;
 
     this.client = client;
     this.executor = executor;
+    this.logger = logger;
     this.state = {
       walkthrough: null,
       step: null,
@@ -12468,15 +12469,7 @@ if (!window.Walkhub) {
   };
 
   Walkhub.Controller.prototype.finish = function () {
-    // Log successful walkthrough playing.
-    var play_result = {
-      'uuid': this.state.walkthrough,
-      'time': 0,
-      'result': true,
-      'error_message': ''
-    };
-
-    this.client.send('walkhub-log-play-result', play_result , null, null, 'post');
+    this.logger.logResult(this.state, true);
 
     this.state.walkthrough = null;
     this.state.step = null;
@@ -13185,7 +13178,10 @@ if (!window.Walkhub) {
         success = true;
         that.client = new Walkhub.Client(event.source, event.origin);
         that.proxy = new Walkhub.ProxyServer(event.source, event.origin);
-        that.controller = new Walkhub.Controller(that.client, that);
+        that.logger = new Walkhub.Logger(that.client);
+        that.controller = new Walkhub.Controller(that.client, that, that.logger);
+
+        that.logger.startWalkthrough();
         window.removeEventListener('message', pingPongServer);
       }
     }
@@ -13247,6 +13243,7 @@ if (!window.Walkhub) {
               var message = "The Selenium locator \"[locator]\" can't find the item, because the page isn't fully loaded, the item is yet to be loaded by Javascript or the walkthrough is broken.".replace('[locator]', step.highlight);
               that.client.showError('locator-fail', message);
               error = true;
+              that.logger.logResult(that.controller.state, false, "locator-fail: [locator]".replace("[locator]", step.highlight));
             },
             giveUp: noElement
           });
@@ -13256,6 +13253,7 @@ if (!window.Walkhub) {
       } else {
         that.client.showError('command-not-supported',
           'The Selenium command "[command]" is not supported.'.replace('[command]', command));
+        that.logger.logResult(that.controller.state, false, "command-not-supported: [command]".replace("[command]", command));
       }
     }, 0);
   };
@@ -13597,6 +13595,66 @@ if (!window.Walkhub) {
   };
 
 })(jqWalkhub, Walkhub, window);
+
+(function($, Walkhub) {
+  "use strict";
+
+  Walkhub.Logger = function(client) {
+    this.client = client;
+    this.start_timestamp = null;
+    this.stop_timestamp = null;
+    this.walkthrough_logged = false;
+  };
+
+  Walkhub.Logger.prototype.startWalkthrough = function() {
+    this.start_timestamp = new Date().getTime();
+  };
+
+  Walkhub.Logger.prototype.stopWalkthrough = function() {
+    this.stop_timestamp = new Date().getTime();
+  };
+
+  Walkhub.Logger.prototype.getPlayMode = function(state) {
+    if (state.HTTPProxyURL === "") {
+      return 'module';
+    }
+
+    return 'proxy';
+  };
+
+  /**
+   * Logs the walkthrough play result to the walkhub-log-play-result endpoint.
+   *
+   * If the endpoint doesn't exist, the query will 404, without causing any
+   * problem.
+   *
+   * @param result boolean.
+   *   true if playing was successful, false otherwise.
+   */
+  Walkhub.Logger.prototype.logResult = function(state, result, message) {
+    if (this.walkthrough_logged) {
+      return;
+    }
+    this.walkthrough_logged = true;
+
+    this.stopWalkthrough();
+
+    if (message === null) {
+      message = "";
+    }
+
+    var play_result = {
+      'uuid': state.walkthrough,
+      'result': result,
+      'error_message': message,
+      'play_mode' : this.getPlayMode(state),
+      'time': (this.stop_timestamp - this.start_timestamp)
+    };
+
+    this.client.send("walkhub-log-play-result", play_result , null, null, "post");
+  };
+
+})(jqWalkhub, Walkhub);
 
 (function ($, Walkhub, window) {
   'use strict';
