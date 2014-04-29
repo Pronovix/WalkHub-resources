@@ -18,10 +18,10 @@
 
   Walkhub.Logger.prototype.getPlayMode = function(state) {
     if (state.HTTPProxyURL === "") {
-      return 'module';
+      return "module";
     }
 
-    return 'proxy';
+    return "proxy";
   };
 
   /**
@@ -46,11 +46,12 @@
     }
 
     var play_result = {
-      'uuid': state.walkthrough,
-      'result': result,
-      'error_message': message,
-      'play_mode' : this.getPlayMode(state),
-      'time': (this.stop_timestamp - this.start_timestamp)
+      "uuid": state.walkthrough,
+      "result": result,
+      "error_message": message,
+      "play_mode" : this.getPlayMode(state),
+      "time": (this.stop_timestamp - this.start_timestamp),
+      "parameters": state.parameters
     };
 
     this.client.send("walkhub-log-play-result", play_result , null, null, "post");
