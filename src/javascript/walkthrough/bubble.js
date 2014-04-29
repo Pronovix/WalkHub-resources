@@ -178,68 +178,17 @@
 
     var that = this;
 
-    var clickCatcher = $('<div />')
-      .css('width', '1px')
-      .css('height', '1px')
-      .css('background-color', 'rgba(1, 1, 1, 0)')
-      .css('position', 'absolute')
-      .click(function (event) {
-        event.preventDefault();
-        event.stopPropagation();
+    Walkhub.EventAbsorber.instance().subscribeToMouseEvents(function editorElementClick (clickedElement) {
+      var newLocator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
+      if (newLocator) {
+        that.moveBubble(clickedElement);
+        $('#firstarg', that.editdialog.form).val(newLocator);
+      } else {
+        that.resetBubble();
+      }
 
-        that.removeHover();
-        $(window).unbind('mousemove.walkhub');
-
-        var clickedElement = that.getElementAtEvent(event);
-        var newLocator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
-        if (newLocator) {
-          that.moveBubble(clickedElement);
-          $('#firstarg', that.editdialog.form).val(newLocator);
-        } else {
-          that.resetBubble();
-        }
-
-        $(this).remove();
-
-        return false;
-      })
-      .appendTo($('body'));
-
-    // Intentionally left here. This is a very good method to debug.
-    //clickCatcher.css('border', '5px solid red');
-
-    $(window)
-      .bind('mousemove.walkhub', function (event) {
-        var pos = that.getPositionFromEvent(event, false);
-        clickCatcher
-          .css('top', pos.y)
-          .css('left', pos.x);
-
-        that.refreshHover(event);
-      });
-  };
-
-  Walkhub.Bubble.prototype.getPositionFromEvent = function (event, withscroll) {
-    // @TODO IE support, see: http://stackoverflow.com/questions/3343384/mouse-position-cross-browser-compatibility-javascript
-    return {
-      x: event.pageX - (withscroll ? window.scrollX : 0),
-      y: event.pageY - (withscroll ? window.scrollY : 0)
-    };
-  };
-
-  Walkhub.Bubble.prototype.removeHover = function () {
-    $('.walkthrough-editor-hover')
-      .removeClass('walkthrough-editor-hover');
-  };
-
-  Walkhub.Bubble.prototype.refreshHover = function (event) {
-    this.removeHover();
-    this.getElementAtEvent(event).addClass('walkthrough-editor-hover');
-  };
-
-  Walkhub.Bubble.prototype.getElementAtEvent = function (event) {
-    var pos = this.getPositionFromEvent(event, true);
-    return $(window.document.elementFromPoint(pos.x, pos.y - 1));
+      Walkhub.EventAbsorber.instance().unsubscribeFromMouseEvents(editorElementClick);
+    });
   };
 
   Walkhub.Bubble.prototype.resetNub = function () {

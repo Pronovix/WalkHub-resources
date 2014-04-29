@@ -139,7 +139,7 @@
       if (cssAttributes.hasOwnProperty(i)) {
         var attr = cssAttributes[i];
         var value = node.getAttribute(attr);
-        if (value) {
+        if (value && value.indexOf('walkthrough') === -1) {
           if (attr === 'id') {
             return '#' + value;
           }
