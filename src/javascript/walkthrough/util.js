@@ -38,33 +38,36 @@
    * @param element {jQuery}
    *   jQuery element to check.
    * @returns {number}
-   *   Returns 0 if the element is not an input element.
-   *   Returns 1 if the element is a form input element.
-   *   Returns 2 if the element is a regular element,
-   *   but the contenteditable flag is set.
+   *   - Returns Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT
+   *     if the element is not an input element.
+   *   - Returns Walkhub.Util.isInputElement.INPUT_ELEMENT
+   *     if the element is a form input element.
+   *   - Returns Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT
+   *     if the element is a regular element, but the contenteditable
+   *     flag is set.
    */
   Walkhub.Util.isInputElement = function (element) {
     if (element.length === 0) {
-      return 0;
+      return Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT;
     }
     // check for standard input elements
     var tn = Walkhub.Util.tagName(element);
     if (tn === 'textarea') {
-      return 1;
+      return Walkhub.Util.isInputElement.INPUT_ELEMENT;
     }
     if (tn === 'select') {
-      return 1;
+      return Walkhub.Util.isInputElement.INPUT_ELEMENT;
     }
     if (tn === 'option') {
-      return 1;
+      return Walkhub.Util.isInputElement.INPUT_ELEMENT;
     }
     if (tn === 'input') {
       switch (element.attr('type')) {
         case 'button':
         case 'submit':
-          return 0;
+          return Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT;
         default:
-          return 1;
+          return Walkhub.Util.isInputElement.INPUT_ELEMENT;
       }
     }
 
@@ -72,21 +75,25 @@
     var rawElement = element.get(0);
     if (rawElement.contentEditable !== null && rawElement.contentEditable !== undefined) {
       if (rawElement.isContentEditable) {
-        return 2;
+        return Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT;
       }
     } else {
       for (var e = element; e.length > 0; e = e.parent()) {
         var ce = e.attr('contentEditable');
         if (ce === 'true') {
-          return 2;
+          return Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT;
         }
         if (ce === 'false') {
-          return 0;
+          return Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT;
         }
       }
     }
 
-    return 0;
+    return Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT;
   };
+
+  Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT = 0;
+  Walkhub.Util.isInputElement.INPUT_ELEMENT = 1;
+  Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT = 2;
 
 })(jqWalkhub, Walkhub);

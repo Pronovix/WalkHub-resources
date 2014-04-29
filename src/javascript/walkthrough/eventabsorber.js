@@ -33,10 +33,10 @@
         var currentValue = null;
         var activeElement = $(that.activeElement);
         switch (Walkhub.Util.isInputElement(activeElement)) {
-          case 1:
+          case Walkhub.Util.isInputElement.INPUT_ELEMENT:
             currentValue = activeElement.val();
             break;
-          case 2:
+          case Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT:
             // @TODO add proper support to contentEditable
             break;
         }
