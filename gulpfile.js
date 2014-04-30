@@ -10,7 +10,7 @@
   var gulpif = require('gulp-if');
   var compass = require('gulp-compass');
   var plumber = require('gulp-plumber');
-  var jshint = require('gulp-jshint');
+  var eslint = require('gulp-eslint');
   var csso = require('gulp-csso');
   var cmq = require('gulp-combine-media-queries');
 
@@ -32,10 +32,10 @@
 
   paths.scripts = paths.vendor_scripts.concat(paths.non_vendor_scripts);
 
-  gulp.task('jshint', function () {
+  gulp.task('eslint', function () {
     return gulp.src(paths.non_vendor_scripts)
-      .pipe(jshint())
-      .pipe(jshint.reporter('default'));
+      .pipe(eslint())
+      .pipe(eslint.format());
   });
 
   gulp.task('buildjs', function () {
@@ -75,7 +75,7 @@
 
   gulp.task('watch', function () {
     gulp.watch('./src', ['clean', 'build']);
-    gulp.watch(paths.non_vendor_scripts, ['jshint']);
+    gulp.watch(paths.non_vendor_scripts, ['eslint']);
     gulp.watch(paths.non_vendor_scripts, ['buildjs']);
   });
 
