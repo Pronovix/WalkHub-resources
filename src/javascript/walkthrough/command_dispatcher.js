@@ -82,17 +82,9 @@
           },
           function (step) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
-            var sanitizedValue = Walkhub.CommandDispatcher.sanitizeValue(step.arg2);
-            var realValue = null;
-            if (element.get(0).tagName.toLowerCase() === 'select') {
-              element.children().each(function () {
-                if ($(this).html() === sanitizedValue) {
-                  realValue = $(this).attr('value');
-                }
-              });
-            }
+            var value = Walkhub.CommandDispatcher.getValueForSelectOption(element, step.arg2);
             element
-              .val(realValue || sanitizedValue)
+              .val(value)
               .change();
           })
         .addCommand('open',
@@ -121,22 +113,58 @@
     return this.instanceObject;
   };
 
-  Walkhub.CommandDispatcher.sanitizeValue = function (value) {
-    if (value) {
-      var types = {
-        'label': function (arg) {
-          return arg;
-        }
-      };
+  Walkhub.CommandDispatcher.getValueForSelectOption = function (element, value) {
+    var types = {
+      'label': function (val) {
+        var ret = null;
+        element.find('option').each(function () {
+          if ($(this).attr('label') === val) {
+            ret = $(this);
+          }
+          if ($(this).html() === val) {
+            ret = $(this);
+          }
+        });
+        return ret;
+      },
+      'value': function (val) {
+        var ret = null;
+        element.find('option').each(function () {
+          if ($(this).attr('value') === val) {
+            ret = $(this);
+          }
+          if ($(this).html() === val) {
+            ret = $(this);
+          }
+        });
+        return ret;
+      },
+      'id': function (val) {
+        return element.find('option#' + val);
+      },
+      'index': function (val) {
+        return element.find('option:nth-child(' + val + ')');
+      }
+    };
 
-      for (var prefix in types) {
-        if (types.hasOwnProperty(prefix) && value.indexOf(prefix + "=") === 0) {
-          return types[prefix](value.substr(prefix.length + 1));
-        }
+    var option;
+
+    for (var prefix in types) {
+      if (types.hasOwnProperty(prefix) && value.indexOf(prefix + '=') === 0) {
+        option = types[prefix](value.substr(prefix.length + 1));
+        break;
       }
     }
 
-    return value;
+    if (!option) {
+      option = types.label(value);
+    }
+
+    if (!option) {
+      return null;
+    }
+
+    return option.attr('value') || option.html();
   };
 
 })(jqWalkhub, Walkhub, window);
