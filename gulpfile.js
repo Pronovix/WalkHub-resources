@@ -11,6 +11,8 @@
   var compass = require('gulp-compass');
   var plumber = require('gulp-plumber');
   var jshint = require('gulp-jshint');
+  var csso = require('gulp-csso');
+  var cmq = require('gulp-combine-media-queries');
 
   var paths = {
     vendor_scripts: [
@@ -59,6 +61,8 @@
     return gulp.src(paths.sass)
       .pipe(plumber())
       .pipe(compass(sassConfig))
+      .pipe(csso())
+      .pipe(cmq({log: true}))
       .pipe(gulp.dest('walkthrough.css'));
   });
 
