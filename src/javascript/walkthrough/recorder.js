@@ -82,7 +82,22 @@
   Walkhub.Recorder.prototype.keyboardEventHandler = function (element, value) {
     var locator = Walkhub.LocatorGenerator.instance().generate(element);
 
-    this.client.saveStep('type', locator, value);
+    if (!locator) {
+      return;
+    }
+
+    var tagName = (element.prop('tagName') || "").toLowerCase();
+    switch (tagName) {
+      case 'select':
+        this.client.saveStep('select', locator, 'value=' + value);
+        break;
+      case 'input':
+      case 'textarea':
+        this.client.saveStep('type', locator, value);
+        break;
+      default:
+        this.client.log(['TODO add support for: ' + tagName, element, value]);
+    }
   };
 
 
