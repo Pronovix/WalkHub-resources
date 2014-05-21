@@ -89,6 +89,7 @@
         .css("width", "1px")
         .css("height", "1px")
         .css("background-color", "rgba(1, 1, 1, 0)")
+        .css("z-index", Walkhub.Context.MAXIMUM_ZINDEX)
         .css("position", "absolute")
         .click(function (event) {
           event.preventDefault();
