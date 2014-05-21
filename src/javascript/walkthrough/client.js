@@ -1,5 +1,5 @@
 (function ($, Walkhub, window) {
-  'use strict';
+  "use strict";
 
   Walkhub.Client = function (frame, defaultOrigin) {
     var that = this;
@@ -22,7 +22,7 @@
           that.serverKey = data.key;
           Walkhub.Context.fullscreen = data.fullscreen;
           that.post({
-            type: 'getState'
+            type: "getState"
           });
         }
       },
@@ -48,7 +48,7 @@
       }
     };
 
-    window.addEventListener('message', function (event) {
+    window.addEventListener("message", function (event) {
       var data = JSON.parse(event.data);
       var handler = data && data.type && that.handlers[data.type];
       if (handler) {
@@ -59,11 +59,15 @@
 
   Walkhub.Client.prototype.post = function (data) {
     data.key = data.key || this.serverKey;
-    data.tag = data.tag || 'client';
+    data.tag = data.tag || "client";
     if (this.proxyKey) {
       data.proxy_key = this.proxyKey;
     }
-    this.frame.postMessage(JSON.stringify(data), this.origin);
+    try {
+      this.frame.postMessage(JSON.stringify(data), this.origin);
+    } catch (e) {
+      console.log(e, data, this.frame);
+    }
   };
 
   Walkhub.Client.prototype.send = function (endpoint, data, success, error, method) {
@@ -78,9 +82,9 @@
     };
 
     var message = {
-      type: 'request',
+      type: "request",
       ticket: ticket,
-      URL: this.baseURL + 'api/v2/' + endpoint,
+      URL: this.baseURL + "api/v2/" + endpoint,
       data: data
     };
 
@@ -99,14 +103,14 @@
 
   Walkhub.Client.prototype.log = function (data) {
     this.post({
-      type: 'log',
+      type: "log",
       log: data
     });
   };
 
   Walkhub.Client.prototype.showError = function (id, error) {
     this.post({
-      type: 'showError',
+      type: "showError",
       id: id,
       error: error
     });
@@ -114,31 +118,37 @@
 
   Walkhub.Client.prototype.suppressError = function (id) {
     this.post({
-      type: 'suppressError',
+      type: "suppressError",
       id: id
     });
   };
 
   Walkhub.Client.prototype.updateState = function (state) {
-    this.post({type: 'setState', state: state});
+    this.post({type: "setState", state: state});
   };
 
   Walkhub.Client.prototype.saveStep = function (cmd, arg0, arg1) {
     this.post({
-      type: 'saveStep',
+      type: "saveStep",
       cmd: cmd,
       arg0: arg0,
       arg1: arg1
     });
   };
 
+  Walkhub.Client.prototype.enablePasswordParameter = function () {
+    this.post({
+      type: "enablePasswordParameter"
+    });
+  };
+
   Walkhub.Client.prototype.finish = function () {
-    this.post({type: 'finished'});
+    this.post({type: "finished"});
   };
 
   Walkhub.Client.prototype.start = function () {
     if (this.frame && this.origin) {
-      this.post({type: 'connect', origin: window.location.origin, url: window.location.href});
+      this.post({type: "connect", origin: window.location.origin, url: window.location.href});
     }
   };
 

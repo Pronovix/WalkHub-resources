@@ -1,5 +1,5 @@
 (function ($, Walkhub, window) {
-  'use strict';
+  "use strict";
 
   Walkhub.CommandDispatcher = function () {
     this.commands = {};
@@ -49,36 +49,46 @@
       this.instanceObject = new Walkhub.CommandDispatcher();
 
       this.instanceObject
-        .addCommand('click',
+        .addCommand("click",
           function (step, onStepCompleteCallback) {
             Walkhub.Translator.instance().translate(step.arg1)
-              .unbind('click.walkhub')
-              .bind('click.walkhub', onStepCompleteCallback);
+              .unbind("click.walkhub")
+              .bind("click.walkhub", onStepCompleteCallback);
           },
           function (step) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
             var raw = element.get(0);
             raw.click();
           })
-        .addCommand('type',
+        .addCommand("type",
           function (step, onStepCompleteCallback) {
             Walkhub.Translator.instance().translate(step.arg1)
-              .unbind('change.walkhub')
-              .bind('change.walkhub', onStepCompleteCallback);
+              .unbind("change.walkhub")
+              .bind("change.walkhub", onStepCompleteCallback);
           },
           function (step) {
-            Walkhub.Translator.instance().translate(step.arg1)
-              .val(step.arg2)
-              .keydown()
-              .keyup()
-              .change();
+            var element = Walkhub.Translator.instance().translate(step.arg1);
+            switch (Walkhub.Util.isInputElement(element)) {
+              case Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT:
+                break;
+              case Walkhub.Util.isInputElement.INPUT_ELEMENT:
+                element
+                  .val(step.arg2)
+                  .keydown()
+                  .keyup()
+                  .change();
+                break;
+              case Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT:
+                element.html(Walkhub.Util.filterXSS(step.arg2));
+                break;
+            }
           })
-        .addCommand('select',
+        .addCommand("select",
           function (step, onStepCompleteCallback) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
             element
-              .unbind('change.walkhub')
-              .bind('change.walkhub', onStepCompleteCallback);
+              .unbind("change.walkhub")
+              .bind("change.walkhub", onStepCompleteCallback);
           },
           function (step) {
             var element = Walkhub.Translator.instance().translate(step.arg1);
@@ -87,7 +97,7 @@
               .val(value)
               .change();
           })
-        .addCommand('open',
+        .addCommand("open",
           function (step, onStepCompleteCallback) {},
           function (step) {
             var url = step.arg1;
@@ -107,7 +117,7 @@
               window.location = url;
             }
           }, true)
-        .addAlias('sendKeys', 'type');
+        .addAlias("sendKeys", "type");
     }
 
     return this.instanceObject;
@@ -115,10 +125,10 @@
 
   Walkhub.CommandDispatcher.getValueForSelectOption = function (element, value) {
     var types = {
-      'label': function (val) {
+      "label": function (val) {
         var ret = null;
-        element.find('option').each(function () {
-          if ($(this).attr('label') === val) {
+        element.find("option").each(function () {
+          if ($(this).attr("label") === val) {
             ret = $(this);
           }
           if ($(this).html() === val) {
@@ -127,10 +137,10 @@
         });
         return ret;
       },
-      'value': function (val) {
+      "value": function (val) {
         var ret = null;
-        element.find('option').each(function () {
-          if ($(this).attr('value') === val) {
+        element.find("option").each(function () {
+          if ($(this).attr("value") === val) {
             ret = $(this);
           }
           if ($(this).html() === val) {
@@ -139,18 +149,18 @@
         });
         return ret;
       },
-      'id': function (val) {
-        return element.find('option#' + val);
+      "id": function (val) {
+        return element.find("option#" + val);
       },
-      'index': function (val) {
-        return element.find('option:nth-child(' + val + ')');
+      "index": function (val) {
+        return element.find("option:nth-child(" + val + ")");
       }
     };
 
     var option;
 
     for (var prefix in types) {
-      if (types.hasOwnProperty(prefix) && value.indexOf(prefix + '=') === 0) {
+      if (types.hasOwnProperty(prefix) && value.indexOf(prefix + "=") === 0) {
         option = types[prefix](value.substr(prefix.length + 1));
         break;
       }
@@ -164,7 +174,7 @@
       return null;
     }
 
-    return option.attr('value') || option.html();
+    return option.attr("value") || option.html();
   };
 
 })(jqWalkhub, Walkhub, window);

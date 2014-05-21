@@ -9,7 +9,7 @@
   };
 
   Walkhub.Util.tagName = function (element) {
-    var tn = $(element).prop('tagName');
+    var tn = $(element).prop("tagName");
     if (tn === null || tn === undefined || !tn.toLowerCase) {
       Walkhub.Util.log(["Invalid element", element, tn]);
       return null;
@@ -18,18 +18,57 @@
     return tn.toLowerCase();
   };
 
-  Walkhub.Util.dispatchMouseEvent = function (type, element) {
-    var event = document.createEvent('MouseEvents');
-    event.initMouseEvent(type, true, true, window);
-    if (element.length) {
-      element.get(0).dispatchEvent(event);
+  Walkhub.Util.filterXSS = function (text) {
+    var dom = $.parseHTML(text);
+
+    $("script", dom).remove();
+
+    $("a[href^=\"javascript:\"]").attr("href", "#");
+
+    dom.each(function () {
+      var that = $(this);
+      for (var attribute in this.attributes) {
+        if (this.attributes.hasOwnProperty(attribute) && attribute.indexOf("on") === 0 && that.attr(attribute)) {
+          that.attr(attribute, "");
+        }
+      }
+    });
+
+    return $("<div />").append(dom).html();
+  };
+
+  Walkhub.Util.dispatchMouseEvent = function (type, element, eventData) {
+    var ed = eventData || {
+      canBubble: true,
+      cancelable: true
+    };
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent(
+      type,
+      ed.canBubble,
+      ed.cancelable,
+      window,
+      ed.detail,
+      ed.screenX,
+      ed.screenY,
+      ed.clientX,
+      ed.clientY,
+      ed.ctrlKey,
+      ed.altKey,
+      ed.shiftKey,
+      ed.metaKey,
+      ed.button,
+      null
+    );
+    if (element) {
+      element.dispatchEvent(event);
     }
   };
 
-  Walkhub.Util.clickOnElement = function (element) {
-    Walkhub.Util.dispatchMouseEvent('mousedown', element);
-    Walkhub.Util.dispatchMouseEvent('mouseup', element);
-    Walkhub.Util.dispatchMouseEvent('click', element);
+  Walkhub.Util.clickOnElement = function (element, eventData) {
+    Walkhub.Util.dispatchMouseEvent("mousedown", element, eventData);
+    Walkhub.Util.dispatchMouseEvent("mouseup", element, eventData);
+    Walkhub.Util.dispatchMouseEvent("click", element, eventData);
   };
 
   /**
@@ -52,19 +91,19 @@
     }
     // check for standard input elements
     var tn = Walkhub.Util.tagName(element);
-    if (tn === 'textarea') {
+    if (tn === "textarea") {
       return Walkhub.Util.isInputElement.INPUT_ELEMENT;
     }
-    if (tn === 'select') {
+    if (tn === "select") {
       return Walkhub.Util.isInputElement.INPUT_ELEMENT;
     }
-    if (tn === 'option') {
+    if (tn === "option") {
       return Walkhub.Util.isInputElement.INPUT_ELEMENT;
     }
-    if (tn === 'input') {
-      switch (element.attr('type')) {
-        case 'button':
-        case 'submit':
+    if (tn === "input") {
+      switch (element.attr("type")) {
+        case "button":
+        case "submit":
           return Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT;
         default:
           return Walkhub.Util.isInputElement.INPUT_ELEMENT;
@@ -79,11 +118,11 @@
       }
     } else {
       for (var e = element; e.length > 0; e = e.parent()) {
-        var ce = e.attr('contentEditable');
-        if (ce === 'true') {
+        var ce = e.attr("contentEditable");
+        if (ce === "true") {
           return Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT;
         }
-        if (ce === 'false') {
+        if (ce === "false") {
           return Walkhub.Util.isInputElement.NOT_INPUT_ELEMENT;
         }
       }
