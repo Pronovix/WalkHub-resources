@@ -39,7 +39,7 @@
 
     var that = this;
 
-    var mouseWrapper = function (clickedElement) { that.mouseEventHandler(clickedElement); };
+    var mouseWrapper = function (clickedElement, eventData) { that.mouseEventHandler(clickedElement, eventData); };
     var keyboardWrapper = function (type, key) { that.keyboardEventHandler(type, key); };
 
     Walkhub.EventAbsorber.instance().subscribeToMouseEvents(mouseWrapper);
@@ -69,14 +69,40 @@
     this.client.updateState(this.state);
   };
 
-  Walkhub.Recorder.prototype.mouseEventHandler = function (clickedElement) {
-    if (!Walkhub.Util.isInputElement(clickedElement)) {
-      var locator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
-      this.client.saveStep('click', locator, null);
+  Walkhub.Recorder.prototype.mouseEventHandler = function (clickedElement, eventData) {
+    if (!clickedElement) {
+      return;
     }
 
-    Walkhub.Util.clickOnElement(clickedElement);
-    clickedElement.focus();
+    if (!Walkhub.Util.isInputElement(clickedElement)) {
+      var locator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
+      this.client.saveStep("click", locator, null);
+    }
+
+    if (clickedElement.length === 0) {
+      return;
+    }
+
+    var rawClickedElement = clickedElement.get(0);
+
+    Walkhub.Util.clickOnElement(rawClickedElement, eventData);
+
+    if (window.document.activeElement === rawClickedElement) {
+      return;
+    }
+
+    if (rawClickedElement.isContentEditable) {
+      var focusElement = rawClickedElement;
+      while (focusElement && focusElement.contentEditable === "inherit") {
+        focusElement = focusElement.parentNode;
+        if (window.document.activeElement === focusElement) {
+          return;
+        }
+      }
+      focusElement.focus();
+    } else {
+      rawClickedElement.focus();
+    }
   };
 
   Walkhub.Recorder.prototype.keyboardEventHandler = function (element, value) {
@@ -86,17 +112,28 @@
       return;
     }
 
-    var tagName = (element.prop('tagName') || "").toLowerCase();
+    var tagName = (element.prop("tagName") || "").toLowerCase();
     switch (tagName) {
-      case 'select':
-        this.client.saveStep('select', locator, 'value=' + value);
+      case "select":
+        this.client.saveStep("select", locator, "value=" + value);
         break;
-      case 'input':
-      case 'textarea':
-        this.client.saveStep('type', locator, value);
+      case "input":
+      case "textarea":
+        var ispw = element.attr("type") === "password";
+        if (ispw) {
+          this.client.enablePasswordParameter();
+        }
+        this.client.saveStep("type", locator, ispw ? "[password]" : value);
         break;
       default:
-        this.client.log(['TODO add support for: ' + tagName, element, value]);
+        if (element.length && element.get(0).isContentEditable) {
+          var valueDom = $(element.html());
+          valueDom.find(".walkthrough-eventabsorber-hover").removeClass("walkthrough-eventabsorber-hover");
+          var finalValue = $("<div />").append(valueDom).html();
+          this.client.saveStep("type", locator, finalValue);
+        } else {
+          this.client.log(["TODO add support for: " + tagName, locator, value]);
+        }
     }
   };
 

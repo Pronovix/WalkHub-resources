@@ -9,6 +9,10 @@
     this.keyboardWatcherLooping = false;
     this.activeElement = null;
     this.activeElementValue = null;
+
+    window.addEventListener("beforeunload", function () {
+      $(window.document.activeElement).blur();
+    });
   };
 
   Walkhub.EventAbsorber.instance = function () {
@@ -37,7 +41,7 @@
             currentValue = activeElement.val();
             break;
           case Walkhub.Util.isInputElement.CONTENTEDITABLE_ELEMENT:
-            // @TODO add proper support to contentEditable
+            currentValue = $(activeElement).html();
             break;
         }
 
@@ -81,11 +85,11 @@
   Walkhub.EventAbsorber.prototype.absorbMouseEvents = function () {
     var that = this;
     if (!this.mouseEventAbsorber) {
-      this.mouseEventAbsorber = $('<div />')
-        .css('width', '1px')
-        .css('height', '1px')
-        .css('background-color', 'rgba(1, 1, 1, 0)')
-        .css('position', 'absolute')
+      this.mouseEventAbsorber = $("<div />")
+        .css("width", "1px")
+        .css("height", "1px")
+        .css("background-color", "rgba(1, 1, 1, 0)")
+        .css("position", "absolute")
         .click(function (event) {
           event.preventDefault();
           event.stopPropagation();
@@ -94,20 +98,33 @@
 
           for (var cb in that.mouseEventCallbacks) {
             if (that.mouseEventCallbacks.hasOwnProperty(cb)) {
-              that.mouseEventCallbacks[cb](clickedElement);
+              that.mouseEventCallbacks[cb](clickedElement, {
+                canBubble: event.canBubble,
+                cancelable: event.cancelable,
+                detail: event.detail,
+                screenX: event.screenX,
+                screenY: event.screenY,
+                clientX: event.clientX,
+                clientY: event.clientY,
+                ctrlKey: event.ctrlKey,
+                altKey: event.altKey,
+                shiftKey: event.shiftKey,
+                metaKey: event.metaKey,
+                button: event.button
+              });
             }
           }
 
           return false;
         })
-        .appendTo($('body'));
+        .appendTo($("body"));
 
       $(window)
-        .bind('mousemove.walkhub', function (event) {
+        .bind("mousemove.walkhub", function (event) {
           var pos = that.getPositionFromEvent(event, false);
           that.mouseEventAbsorber
-            .css('top', pos.y)
-            .css('left', pos.x);
+            .css("top", pos.y)
+            .css("left", pos.x);
 
           that.refreshHover(event);
         });
@@ -131,20 +148,20 @@
   };
 
   Walkhub.EventAbsorber.prototype.stopAbsorbingMouseEvents = function () {
-    $(window).unbind('mousemove.walkhub');
+    $(window).unbind("mousemove.walkhub");
     this.removeHover();
     this.mouseEventAbsorber.remove();
     this.mouseEventAbsorber = null;
   };
 
   Walkhub.EventAbsorber.prototype.removeHover = function () {
-    $('.walkthrough-eventabsorber-hover')
-      .removeClass('walkthrough-eventabsorber-hover');
+    $(".walkthrough-eventabsorber-hover")
+      .removeClass("walkthrough-eventabsorber-hover");
   };
 
   Walkhub.EventAbsorber.prototype.refreshHover = function (event) {
     this.removeHover();
-    this.getElementAtEvent(event).addClass('walkthrough-eventabsorber-hover');
+    this.getElementAtEvent(event).addClass("walkthrough-eventabsorber-hover");
   };
 
   Walkhub.EventAbsorber.prototype.getElementAtEvent = function (event) {

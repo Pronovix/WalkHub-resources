@@ -45,23 +45,23 @@
       that.reposition();
     };
 
-    $(window).bind('resize', this.resizeEventHandler);
+    $(window).bind("resize", this.resizeEventHandler);
 
-    this.tipGuide = $('<div />')
-      .css('z-index', Walkhub.Context.MAXIMUM_ZINDEX)
-      .addClass('wtbubble-tip-guide');
+    this.tipGuide = $("<div />")
+      .css("z-index", Walkhub.Context.MAXIMUM_ZINDEX)
+      .addClass("wtbubble-tip-guide");
 
-    this.nub = $('<span />')
-      .addClass('wtbubble-nub')
+    this.nub = $("<span />")
+      .addClass("wtbubble-nub")
       .appendTo(this.tipGuide);
 
-    this.contentWrapper = $('<div />')
-      .attr('role', 'dialog')
-      .addClass('wtbubble-content-wrapper')
+    this.contentWrapper = $("<div />")
+      .attr("role", "dialog")
+      .addClass("wtbubble-content-wrapper")
       .appendTo(this.tipGuide);
 
-    this.title = $('<h5 />')
-      .addClass('wtbubble-step-title')
+    this.title = $("<h5 />")
+      .addClass("wtbubble-step-title")
       .html(this.step.title)
       .appendTo(this.contentWrapper);
 
@@ -71,16 +71,16 @@
       this.title.hide();
     }
 
-    this.description = $('<p />')
-      .addClass('wtbubble-step-description')
+    this.description = $("<p />")
+      .addClass("wtbubble-step-description")
       .html(this.step.description)
       .appendTo(this.contentWrapper);
 
-    this.nextButton = $('<a />')
-      .attr('href', '#')
-      .text('Next')
-      .addClass('wtbubble-next')
-      .addClass('wtbubble-button')
+    this.nextButton = $("<a />")
+      .attr("href", "#")
+      .text("Next")
+      .addClass("wtbubble-next")
+      .addClass("wtbubble-button")
       .click(function (event) {
         event.preventDefault();
         that.hide();
@@ -93,11 +93,11 @@
     }
 
     if (this.step.canEdit) {
-      this.editButton = $('<a />')
-        .attr('href', '#')
-        .addClass('wtbubble-edit')
-        .addClass('wtbubble-button')
-        .text('Edit')
+      this.editButton = $("<a />")
+        .attr("href", "#")
+        .addClass("wtbubble-edit")
+        .addClass("wtbubble-button")
+        .text("Edit")
         .click(function (event) {
           event.preventDefault();
           that.editdialog = new Walkhub.editDialog(that.step, that.contentWrapper);
@@ -109,7 +109,7 @@
             })
             .setSuccessCallback(function (step) {
               that.title.html(step.title);
-              that.title[step.showTitle ? 'show' : 'hide']();
+              that.title[step.showTitle ? "show" : "hide"]();
               that.description.html(step.description);
               that.editdialog = null;
             })
@@ -124,11 +124,11 @@
       if (this.extraButtons.hasOwnProperty(btn)) {
         (function () {
           var key = btn;
-          $('<a />')
-            .attr('href', '#')
-            .addClass('wtbubble-extrabutton')
-            .addClass('wtbubble-button')
-            .addClass('wtbubble-' + btn.toLowerCase().replace(/\s/g, "-"))
+          $("<a />")
+            .attr("href", "#")
+            .addClass("wtbubble-extrabutton")
+            .addClass("wtbubble-button")
+            .addClass("wtbubble-" + btn.toLowerCase().replace(/\s/g, "-"))
             .html(btn)
             .click(function (event) {
               event.preventDefault();
@@ -139,7 +139,7 @@
       }
     }
 
-    $('body').append(this.tipGuide);
+    $("body").append(this.tipGuide);
 
     this.reposition();
   };
@@ -150,7 +150,7 @@
     }
 
     if (this.resizeEventHandler) {
-      $(window).unbind('resize', this.resizeEventHandler);
+      $(window).unbind("resize", this.resizeEventHandler);
     }
 
     this.tipGuide = null;
@@ -172,7 +172,7 @@
   };
 
   Walkhub.Bubble.prototype.beginMove = function () {
-    this.tipGuide.css('display', 'none');
+    this.tipGuide.css("display", "none");
 
     this.hideModalBackground();
 
@@ -182,7 +182,7 @@
       var newLocator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
       if (newLocator) {
         that.moveBubble(clickedElement);
-        $('#firstarg', that.editdialog.form).val(newLocator);
+        $("#firstarg", that.editdialog.form).val(newLocator);
       } else {
         that.resetBubble();
       }
@@ -193,12 +193,12 @@
 
   Walkhub.Bubble.prototype.resetNub = function () {
     this.nub
-      .removeClass('top')
-      .removeClass('bottom')
-      .removeClass('left')
-      .removeClass('right')
+      .removeClass("top")
+      .removeClass("bottom")
+      .removeClass("left")
+      .removeClass("right")
       // In the mobile view, the left css property will be explicitly set.
-      .attr('style', '');
+      .attr("style", "");
   };
 
   Walkhub.Bubble.prototype.moveBubble = function (element) {
@@ -206,14 +206,14 @@
     this.hideModalBackground();
 
     var orientations = this.isPhone() ?
-      ['bottom'] :
-      ['bottom', 'top', 'right', 'left', 'bottom'];
+      ["bottom"] :
+      ["bottom", "top", "right", "left", "bottom"];
 
     var nubOrientations = {
-      'bottom': 'top',
-      'top': 'bottom',
-      'left': 'right',
-      'right': 'left'
+      "bottom": "top",
+      "top": "bottom",
+      "left": "right",
+      "right": "left"
     };
 
     this.resetNub();
@@ -231,20 +231,20 @@
         var pos = this.getBubblePosition(element, orientations[o]);
         if (this.isPhone()) {
           this.tipGuide
-            .css('left', 0)
-            .css('top', pos.y + 'px');
+            .css("left", 0)
+            .css("top", pos.y + "px");
           this.nub
-            .css('left', pos.x + 'px');
+            .css("left", pos.x + "px");
         } else {
           this.tipGuide
-            .css('left', pos.x + 'px')
-            .css('top', pos.y + 'px');
+            .css("left", pos.x + "px")
+            .css("top", pos.y + "px");
         }
 
         if (this.checkCorners()) {
           return;
         } else {
-          console.log('Corner check failed, trying with a different orientation');
+          console.log("Corner check failed, trying with a different orientation");
         }
       }
     }
@@ -267,19 +267,19 @@
     // @TODO check if modal
 
     switch (orientation) {
-      case 'top':
+      case "top":
         pos.y = offset.top - tipHeight - nubHeight;
         pos.x = offset.left;
         break;
-      case 'bottom':
+      case "bottom":
         pos.y = offset.top + elementHeight + nubHeight;
         pos.x = offset.left;
         break;
-      case 'left':
+      case "left":
         pos.y = offset.top;
         pos.x = offset.left - tipWidth - nubWidth;
         break;
-      case 'right':
+      case "right":
         pos.y = offset.top;
         pos.x = elementWidth + offset.left + nubWidth;
         break;
@@ -293,21 +293,21 @@
     var centerX = (w.width() - this.tipGuide.outerWidth()) / 2 + window.scrollX;
     var centerY = (w.height() - this.tipGuide.outerHeight()) / 2 + window.scrollY;
     this.tipGuide
-      .css('top', centerY)
-      .css('left', centerX);
+      .css("top", centerY)
+      .css("left", centerX);
 
     this.showModalBackground();
   };
 
   Walkhub.Bubble.prototype.showModalBackground = function () {
     this.hideModalBackground();
-    $('<div />')
-      .addClass('wtbubble-modal-bg')
-      .appendTo($('body'));
+    $("<div />")
+      .addClass("wtbubble-modal-bg")
+      .appendTo($("body"));
   };
 
   Walkhub.Bubble.prototype.hideModalBackground = function () {
-    $('div.wtbubble-modal-bg').remove();
+    $("div.wtbubble-modal-bg").remove();
   };
 
   Walkhub.Bubble.prototype.checkCorners = function () {
@@ -347,7 +347,7 @@
 
   Walkhub.Bubble.prototype.isPhone = function () {
     if (Modernizr) {
-      return Modernizr.mq('only screen and (max-width: ' + Walkhub.Context.mobileBreakpoint + 'px)');
+      return Modernizr.mq("only screen and (max-width: " + Walkhub.Context.mobileBreakpoint + "px)");
     }
 
     return $(window).width() < Walkhub.Context.mobileBreakpoint;
@@ -357,7 +357,7 @@
     var windowHalf = $(window).height() / 2;
     var tipOffset = Math.ceil(element.offset().top - windowHalf + this.tipGuide.outerHeight());
 
-    $('html, body').stop().animate({
+    $("html, body").stop().animate({
       scrollTop: tipOffset
     });
   };

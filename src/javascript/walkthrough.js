@@ -1,6 +1,6 @@
 // Add window.location.origin for browsers which doesn't support it.
 if (!window.location.origin) {
-  window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+  window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port: "");
 }
 
 if (!window.Walkhub) {
@@ -8,7 +8,7 @@ if (!window.Walkhub) {
 }
 
 (function (Walkhub, window) {
-  'use strict';
+  "use strict";
 
   Walkhub.enforcer = function () {
     if (!this.tries) {
@@ -18,7 +18,7 @@ if (!window.Walkhub) {
       return;
     }
 
-    if (window.document.readyState === 'complete') {
+    if (window.document.readyState === "complete") {
       if (this.tries > 4) {
         Walkhub.currentExecutor.start();
       } else {

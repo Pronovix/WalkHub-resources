@@ -1,5 +1,5 @@
 (function ($, Walkhub, window) {
-  'use strict';
+  "use strict";
 
   Walkhub.Translator = function () {
     this.locators = {};
@@ -83,11 +83,11 @@
       this.instanceObject = new Walkhub.Translator();
 
       var id = function (arg) {
-        return $('#' + arg);
+        return $("#" + arg);
       };
 
       var name = function (arg) {
-        return $('[name=' + arg + ']');
+        return $("[name=" + arg + "]");
       };
 
       var xpath = function (arg) {
@@ -98,7 +98,7 @@
         if (result !== null && result.snapshotLength > 0) {
           return $(result.snapshotItem(0));
         }
-        return $(''); // empty jquery object
+        return $(""); // empty jquery object
       };
 
       var css = function (arg) {
@@ -106,36 +106,36 @@
       };
 
       this.instanceObject
-        .addLocatorTranslator('identifier', function (arg) {
+        .addLocatorTranslator("identifier", function (arg) {
           var jq = id(arg);
           if (jq.length === 0) {
             jq = name(arg);
           }
           return jq;
         })
-        .addLocatorTranslator('id', id)
-        .addLocatorTranslator('name', name)
-        .addLocatorTranslator('dom', function (arg) {
+        .addLocatorTranslator("id", id)
+        .addLocatorTranslator("name", name)
+        .addLocatorTranslator("dom", function (arg) {
           return null;
         })
-        .addLocatorTranslator('xpath', xpath)
-        .addLocatorTranslator('link', function (arg) {
-          return $('a').filter(function () {
+        .addLocatorTranslator("xpath", xpath)
+        .addLocatorTranslator("link", function (arg) {
+          return $("a").filter(function () {
             return $(this).text() === arg;
           });
         })
-        .addLocatorTranslator('css', css)
-        .addLocatorTranslator('ui', function (arg) {
+        .addLocatorTranslator("css", css)
+        .addLocatorTranslator("ui", function (arg) {
           return null;
         })
-        .addLocatorTranslator('default', function (arg) {
+        .addLocatorTranslator("default", function (arg) {
           var item = null;
           try {
             item = xpath(arg);
             // Intentional empty catch here.
-            // If there's something wrong with the xpath,
-            // then it's probably an older selenium test,
-            // and it's not an xpath but a css selector.
+            // If there"s something wrong with the xpath,
+            // then it"s probably an older selenium test,
+            // and it"s not an xpath but a css selector.
           } catch (ex) {}
           if (item === null || item.length === 0) {
             item = css(arg);
@@ -143,7 +143,7 @@
 
           return item;
         })
-        .setDefaultLocator('default')
+        .setDefaultLocator("default")
         .setRetries(120);
     }
 
