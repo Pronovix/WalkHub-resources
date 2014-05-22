@@ -158,8 +158,13 @@
       showtitle.attr("checked", "checked");
     }
 
+    $("<p class=\"wtbubble-editlink\" />")
+      .html("<a href=\"[LINK]\" class=\"wtbubble-editlink\" target=\"_top\">To add, remove or reorder steps visit the Walkthrough edit form</a>".replace("[LINK]", this.controller.getEditLink()))
+      .appendTo(fieldset);
+
     $("<a />")
       .html("Advanced settings")
+      .addClass("wtbubble-button")
       .attr("href", "#")
       .click(function (event) {
         event.preventDefault();
