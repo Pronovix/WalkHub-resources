@@ -79,6 +79,7 @@
     this.nextButton = $("<a />")
       .attr("href", "#")
       .text("Next")
+      .addClass("wtbubble-button")
       .addClass("wtbubble-next")
       .addClass("wtbubble-button")
       .click(function (event) {
