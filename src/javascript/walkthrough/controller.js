@@ -1,11 +1,12 @@
 (function ($, Walkhub, window) {
   "use strict";
 
-  Walkhub.Controller = function (client, executor) {
+  Walkhub.Controller = function (client, executor, logger) {
     var that = this;
 
     this.client = client;
     this.executor = executor;
+    this.logger = logger;
     this.state = {
       walkthrough: null,
       step: null,
@@ -82,6 +83,8 @@
   };
 
   Walkhub.Controller.prototype.finish = function () {
+    this.logger.logResult(this.state, true);
+
     this.state.walkthrough = null;
     this.state.step = null;
     this.state.completed = false;
