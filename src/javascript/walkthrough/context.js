@@ -15,7 +15,7 @@
       return !!Walkhub.Context.isUnloading.unloading;
     },
     start: function () {
-      if (!!Walkhub.Context.start.started) {
+      if (Walkhub.Context.start.started) {
         return;
       }
 
