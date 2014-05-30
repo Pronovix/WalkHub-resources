@@ -9,6 +9,7 @@
     this.keyboardWatcherLooping = false;
     this.activeElement = null;
     this.activeElementValue = null;
+    this.previousHover = null;
 
     window.addEventListener("beforeunload", function () {
       $(window.document.activeElement).blur();
@@ -83,53 +84,65 @@
   };
 
   Walkhub.EventAbsorber.prototype.absorbMouseEvents = function () {
-    var that = this;
-    if (!this.mouseEventAbsorber) {
-      this.mouseEventAbsorber = $("<div />")
-        .css("width", "1px")
-        .css("height", "1px")
-        .css("background-color", "rgba(1, 1, 1, 0)")
-        .css("z-index", Walkhub.Context.MAXIMUM_ZINDEX)
-        .css("position", "absolute")
-        .click(function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-
-          var clickedElement = that.getElementAtEvent(event);
-
-          for (var cb in that.mouseEventCallbacks) {
-            if (that.mouseEventCallbacks.hasOwnProperty(cb)) {
-              that.mouseEventCallbacks[cb](clickedElement, {
-                canBubble: event.canBubble,
-                cancelable: event.cancelable,
-                detail: event.detail,
-                screenX: event.screenX,
-                screenY: event.screenY,
-                clientX: event.clientX,
-                clientY: event.clientY,
-                ctrlKey: event.ctrlKey,
-                altKey: event.altKey,
-                shiftKey: event.shiftKey,
-                metaKey: event.metaKey,
-                button: event.button
-              });
-            }
-          }
-
-          return false;
-        })
-        .appendTo($("body"));
-
-      $(window)
-        .bind("mousemove.walkhub", function (event) {
-          var pos = that.getPositionFromEvent(event, false);
-          that.mouseEventAbsorber
-            .css("top", pos.y)
-            .css("left", pos.x);
-
-          that.refreshHover(event);
-        });
+    if (this.mouseEventAbsorber) {
+      return;
     }
+    var that = this;
+    var $w = $(window);
+
+    this.mouseEventAbsorber = $("<div />")
+      .css("background-color", "rgba(255, 255, 255, 0)")
+      .css("z-index", Walkhub.Context.MAXIMUM_ZINDEX)
+      .click(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        var clickedElement = that.getElementAtEvent(event);
+
+        for (var cb in that.mouseEventCallbacks) {
+          if (that.mouseEventCallbacks.hasOwnProperty(cb)) {
+            that.mouseEventCallbacks[cb](clickedElement, {
+              canBubble: event.canBubble,
+              cancelable: event.cancelable,
+              detail: event.detail,
+              screenX: event.screenX,
+              screenY: event.screenY,
+              clientX: event.clientX,
+              clientY: event.clientY,
+              ctrlKey: event.ctrlKey,
+              altKey: event.altKey,
+              shiftKey: event.shiftKey,
+              metaKey: event.metaKey,
+              button: event.button
+            });
+          }
+        }
+
+        return false;
+      })
+      .appendTo($("body"));
+
+    this.resetOverlay();
+
+    $w
+      .bind("resize.walkhub", function (event) {
+        that.resetOverlay();
+      })
+      .bind("mousemove.walkhub", function (event) {
+        that.handleHovering(event);
+        that.refreshHover(event);
+      });
+  };
+
+  Walkhub.EventAbsorber.prototype.resetOverlay = function () {
+    var $w = $(window);
+
+    this.mouseEventAbsorber
+      .css("width", $w.width() + "px")
+      .css("height", $w.height() + "px")
+      .css("position", "fixed")
+      .css("top", "0")
+      .css("left", "0");
   };
 
   Walkhub.EventAbsorber.prototype.subscribeToMouseEvents = function (callback) {
@@ -165,9 +178,58 @@
     this.getElementAtEvent(event).addClass("walkthrough-eventabsorber-hover");
   };
 
+  Walkhub.EventAbsorber.prototype.handleHovering = function (event) {
+    var currentElement = this.getElementAtEvent(event);
+    if (currentElement.length) {
+      currentElement = currentElement.get(0);
+    } else {
+      return;
+    }
+
+    var eventData = {
+      canBubble: event.canBubble,
+      cancelable: event.cancelable,
+      detail: event.detail,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      ctrlKey: event.ctrlKey,
+      altKey: event.altKey,
+      shiftKey: event.shiftKey,
+      metaKey: event.metaKey,
+      button: event.button
+    };
+
+    if (currentElement !== this.previousHover) {
+      Walkhub.Util.dispatchMouseEvent("mouseleave", this.previousHover, eventData + {relatedTarget: currentElement});
+      Walkhub.Util.dispatchMouseEvent("mouseout", this.previousHover, eventData + {relatedTarget: currentElement});
+
+      if (this.previousHover === null || currentElement !== this.previousHover.parent()) {
+        Walkhub.Util.dispatchMouseEvent("mouseenter", currentElement, eventData + {relatedTarget: this.previousHover});
+      }
+      Walkhub.Util.dispatchMouseEvent("mouseover", currentElement, eventData + {relatedTarget: this.previousHover});
+      this.previousHover = currentElement;
+    }
+
+    Walkhub.Util.dispatchMouseEvent("mousemove", currentElement, eventData);
+  };
+
   Walkhub.EventAbsorber.prototype.getElementAtEvent = function (event) {
     var pos = this.getPositionFromEvent(event, true);
-    return $(window.document.elementFromPoint(pos.x, pos.y - 1));
+
+    this.mouseEventAbsorber
+      .css("top", pos.y + "px")
+      .css("left", pos.x + "px")
+      .css("width", "1px")
+      .css("height", "1px")
+      .css("position", "absolute");
+
+    var element =  $(window.document.elementFromPoint(pos.x, pos.y - 1));
+
+    this.resetOverlay();
+
+    return element;
   };
 
   Walkhub.EventAbsorber.prototype.getPositionFromEvent = function (event, withscroll) {
