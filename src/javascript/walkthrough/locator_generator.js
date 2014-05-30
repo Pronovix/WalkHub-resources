@@ -53,8 +53,7 @@
       .addGenerator(Walkhub.LocatorGenerator.nameGenerator)
       .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("css", Walkhub.LocatorGenerator.cssGenerator))
       .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("xpath", Walkhub.LocatorGenerator.htmlXpathGenerator))
-      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("xpath", Walkhub.LocatorGenerator.fullXpathGenerator))
-    ;
+      .addGenerator(Walkhub.LocatorGenerator.prefixWrapper("xpath", Walkhub.LocatorGenerator.fullXpathGenerator));
 
     return this.instanceObject;
   };
