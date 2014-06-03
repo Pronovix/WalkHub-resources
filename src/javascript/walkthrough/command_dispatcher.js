@@ -117,6 +117,10 @@
               window.location = url;
             }
           }, true)
+        .addCommand("",
+          function (step, onStepCompleteCallback) {},
+          function (step, onStepCompleteCallback) {}
+        )
         .addAlias("sendKeys", "type");
     }
 
