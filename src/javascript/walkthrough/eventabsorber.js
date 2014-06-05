@@ -205,7 +205,7 @@
       Walkhub.Util.dispatchMouseEvent("mouseleave", this.previousHover, eventData + {relatedTarget: currentElement});
       Walkhub.Util.dispatchMouseEvent("mouseout", this.previousHover, eventData + {relatedTarget: currentElement});
 
-      if (this.previousHover === null || currentElement !== this.previousHover.parent()) {
+      if (!this.previousHover || currentElement !== $(this.previousHover).parent()) {
         Walkhub.Util.dispatchMouseEvent("mouseenter", currentElement, eventData + {relatedTarget: this.previousHover});
       }
       Walkhub.Util.dispatchMouseEvent("mouseover", currentElement, eventData + {relatedTarget: this.previousHover});
