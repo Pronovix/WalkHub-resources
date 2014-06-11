@@ -23,6 +23,7 @@
       "src/javascript/modernizr.mq.js",
     ],
     non_vendor_scripts: [
+      "src/javascript/polyfill.js",
       "src/javascript/walkthrough.js",
       "src/javascript/walkthrough/*.js",
       "src/javascript/walkthrough_start.js"
