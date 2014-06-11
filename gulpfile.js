@@ -1,18 +1,18 @@
 (function () {
   "use strict";
 
-  var gulp = require('gulp');
+  var gulp = require("gulp");
 
-  var args = require('yargs').argv;
-  var clean = require('gulp-clean');
-  var uglify = require('gulp-uglify');
-  var concat = require('gulp-concat');
-  var gulpif = require('gulp-if');
-  var compass = require('gulp-compass');
-  var plumber = require('gulp-plumber');
-  var eslint = require('gulp-eslint');
-  var csso = require('gulp-csso');
-  var cmq = require('gulp-combine-media-queries');
+  var args = require("yargs").argv;
+  var clean = require("gulp-clean");
+  var uglify = require("gulp-uglify");
+  var concat = require("gulp-concat");
+  var gulpif = require("gulp-if");
+  var compass = require("gulp-compass");
+  var plumber = require("gulp-plumber");
+  var eslint = require("gulp-eslint");
+  var csso = require("gulp-csso");
+  var cmq = require("gulp-combine-media-queries");
 
   var paths = {
     vendor_scripts: [
@@ -32,30 +32,30 @@
 
   paths.scripts = paths.vendor_scripts.concat(paths.non_vendor_scripts);
 
-  gulp.task('eslint', function () {
+  gulp.task("eslint", function () {
     return gulp.src(paths.non_vendor_scripts)
       .pipe(eslint())
       .pipe(eslint.format());
   });
 
-  gulp.task('buildjs', function () {
+  gulp.task("buildjs", function () {
     return gulp.src(paths.scripts)
       .pipe(plumber())
-      .pipe(concat('compiled.js'))
+      .pipe(concat("compiled.js"))
       .pipe(gulpif(!args.debug, uglify()))
-      .pipe(gulp.dest('.'));
+      .pipe(gulp.dest("."));
   });
 
-  gulp.task('buildsass', function () {
+  gulp.task("buildsass", function () {
     var sassConfig = {
-      css: '.',
-      sass: './src/sass',
-      style: 'compressed',
+      css: ".",
+      sass: "./src/sass",
+      style: "compressed",
       project: __dirname
     };
 
     if (args.debug) {
-      sassConfig.style = 'expanded';
+      sassConfig.style = "expanded";
     }
 
     return gulp.src(paths.sass)
@@ -63,21 +63,21 @@
       .pipe(compass(sassConfig))
       .pipe(csso())
       .pipe(cmq({log: true}))
-      .pipe(gulp.dest('walkthrough.css'));
+      .pipe(gulp.dest("walkthrough.css"));
   });
 
-  gulp.task('build', ['buildjs', 'buildsass']);
+  gulp.task("build", ["buildjs", "buildsass"]);
 
-  gulp.task('clean', function () {
-    return gulp.src(['compiled.js', 'walkthrough.css'])
+  gulp.task("clean", function () {
+    return gulp.src(["compiled.js", "walkthrough.css"])
       .pipe(clean());
   });
 
-  gulp.task('watch', function () {
-    gulp.watch('./src', ['clean', 'build']);
-    gulp.watch(paths.non_vendor_scripts, ['eslint']);
-    gulp.watch(paths.non_vendor_scripts, ['buildjs']);
+  gulp.task("watch", function () {
+    gulp.watch("./src", ["clean", "build"]);
+    gulp.watch(paths.non_vendor_scripts, ["eslint"]);
+    gulp.watch(paths.non_vendor_scripts, ["buildjs"]);
   });
 
-  gulp.task('default', ['clean', 'build', 'watch']);
+  gulp.task("default", ["clean", "build", "watch"]);
 })();
