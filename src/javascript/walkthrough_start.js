@@ -1,11 +1,5 @@
 (function ($, Walkhub, window) {
   "use strict";
-  if (!window.console) {
-    window.console = {
-      log: function () {
-      }
-    };
-  }
 
   Walkhub.logParams = function () {
     console.log(arguments);

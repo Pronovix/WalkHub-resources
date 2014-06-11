@@ -143,7 +143,7 @@
             return "#" + value;
           }
           if (attr === "class") {
-            return node.nodeName.toLowerCase() + "." + value.replace(" ", ".").replace("..", ".");
+            return node.nodeName.toLowerCase() + "." + value.trim().replace(/\s+/g, ".");
           }
 
           return node.nodeName.toLowerCase() + "[" + attr + "=\"" + value + "\"]";
