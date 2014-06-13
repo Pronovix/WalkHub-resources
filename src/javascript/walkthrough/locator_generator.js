@@ -139,11 +139,21 @@
         var attr = cssAttributes[i];
         var value = node.getAttribute(attr);
         if (value && value.indexOf("walkthrough") === -1) {
-          if (attr === "id") {
+          if (attr === "id" && !Walkhub.LocatorGenerator.hashiness(value)) {
             return "#" + value;
           }
           if (attr === "class") {
-            return node.nodeName.toLowerCase() + "." + value.trim().replace(/\s+/g, ".");
+            var classes = value.trim().split(/\s+/);
+            var classstring = "";
+            for (var c in classes) {
+              if (classes.hasOwnProperty(c) && classes[c] && !Walkhub.LocatorGenerator.hashiness(classes[c])) {
+                classstring += "." + classes[c];
+              }
+            }
+
+            if (classstring) {
+              return node.nodeName.toLowerCase() + classstring;
+            }
           }
 
           return node.nodeName.toLowerCase() + "[" + attr + "=\"" + value + "\"]";
@@ -213,7 +223,7 @@
   };
 
   Walkhub.LocatorGenerator.normalizeWhitespace = function (text) {
-    return text.replace(/\s+/g, " ").replace(/^ /, "").replace(/ $/, "");
+    return text.replace(/\s+/g, " ").trim();
   };
 
   Walkhub.LocatorGenerator.fullXpathGenerator = function (element) {
@@ -229,7 +239,7 @@
     }
 
     var className = node.className;
-    if (className && className.indexOf(" ") === -1 && document.getElementsByClassName(className).length === 1) {
+    if (className && className.indexOf(" ") === -1 && document.getElementsByClassName(className).length === 1 && !Walkhub.LocatorGenerator.hashiness(className)) {
       return "//" + nodeName + "[@class=\"" + className + "]\"";
     }
 
