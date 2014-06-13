@@ -347,7 +347,7 @@
   };
 
   Walkhub.Bubble.prototype.isPhone = function () {
-    if (Modernizr) {
+    if (Modernizr && Modernizr.mq) {
       return Modernizr.mq("only screen and (max-width: " + Walkhub.Context.mobileBreakpoint + "px)");
     }
 
