@@ -299,7 +299,19 @@
       }
     }
 
+    for (var id in Walkhub.LocatorGenerator.customIDs) {
+      if (Walkhub.LocatorGenerator.customIDs.hasOwnProperty(id)) {
+        if (str.match(Walkhub.LocatorGenerator.customIDs[id])) {
+          return true;
+        }
+      }
+    }
+
     return false;
+  };
+
+  Walkhub.LocatorGenerator.customIDs = {
+    DrupalNodeID: /^node-[\d]+$/gi
   };
 
 })(jqWalkhub, Walkhub, window);
