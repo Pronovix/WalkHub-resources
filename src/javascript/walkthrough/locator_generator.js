@@ -234,7 +234,7 @@
   Walkhub.LocatorGenerator.getXpath = function (node) {
     var nodeName = node.nodeName.toLowerCase();
 
-    if (node.id && document.getElementById(node.id) === node) {
+    if (node.id && document.getElementById(node.id) === node && !Walkhub.LocatorGenerator.hashiness(node.id)) {
       return "//" + nodeName + "[@id=\"" + node.id + "\"]";
     }
 
