@@ -94,6 +94,21 @@
       .css("background-color", "rgba(255, 255, 255, 0)")
       .css("z-index", Walkhub.Context.MAXIMUM_ZINDEX)
       .click(function (event) {
+        var eventData = {
+          canBubble: event.bubbles,
+          cancelable: event.cancelable,
+          detail: event.detail,
+          screenX: event.screenX,
+          screenY: event.screenY,
+          clientX: event.clientX,
+          clientY: event.clientY,
+          ctrlKey: event.ctrlKey,
+          altKey: event.altKey,
+          shiftKey: event.shiftKey,
+          metaKey: event.metaKey,
+          button: event.button
+        };
+
         event.preventDefault();
         event.stopPropagation();
 
@@ -101,20 +116,7 @@
 
         for (var cb in that.mouseEventCallbacks) {
           if (that.mouseEventCallbacks.hasOwnProperty(cb)) {
-            that.mouseEventCallbacks[cb](clickedElement, {
-              canBubble: event.canBubble,
-              cancelable: event.cancelable,
-              detail: event.detail,
-              screenX: event.screenX,
-              screenY: event.screenY,
-              clientX: event.clientX,
-              clientY: event.clientY,
-              ctrlKey: event.ctrlKey,
-              altKey: event.altKey,
-              shiftKey: event.shiftKey,
-              metaKey: event.metaKey,
-              button: event.button
-            });
+            that.mouseEventCallbacks[cb](clickedElement, eventData);
           }
         }
 
