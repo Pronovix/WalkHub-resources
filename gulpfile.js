@@ -13,6 +13,7 @@
   var eslint = require("gulp-eslint");
   var csso = require("gulp-csso");
   var cmq = require("gulp-combine-media-queries");
+  var minifycss = require('gulp-minify-css');
 
   var paths = {
     vendor_scripts: [
@@ -52,20 +53,16 @@
     var sassConfig = {
       css: ".",
       sass: "./src/sass",
-      style: "compressed",
       project: __dirname
     };
-
-    if (args.debug) {
-      sassConfig.style = "expanded";
-    }
 
     return gulp.src(paths.sass)
       .pipe(plumber())
       .pipe(compass(sassConfig))
       .pipe(csso())
       .pipe(cmq({log: true}))
-      .pipe(gulp.dest("walkthrough.css"));
+      .pipe(gulpif(!args.debug, minifycss()))
+      .pipe(gulp.dest("./"));
   });
 
   gulp.task("build", ["buildjs", "buildsass"]);
