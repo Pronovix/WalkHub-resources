@@ -80,7 +80,6 @@
     };
 
     return gulp.src(paths.sass)
-      .pipe(plumber())
       .pipe(compass(sassConfig))
       .pipe(csso())
       .pipe(cmq({log: true}))
