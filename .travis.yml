@@ -2,10 +2,12 @@ language: node_js
 install: true
 
 node_js:
-  - 1.4.4
+  - 0.10.x
 
 before_install:
-  - npm install jshint
+  - npm install
 
 script:
-  - jshint ./src/javascript/**.js
+  - ./node_modules/.bin/gulp build
+  - ./node_modules/.bin/gulp eslint
+
