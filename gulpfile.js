@@ -25,7 +25,8 @@
       "src/javascript/md5.js"
     ],
     non_vendor_scripts: [
-      "src/javascript/polyfill.js",
+      // Polyfill.js adds hacks for IE, it does not conform eslint for now:
+      // "src/javascript/polyfill.js",
       "src/javascript/walkthrough.js",
       "src/javascript/walkthrough/*.js",
       "src/javascript/walkthrough_start.js"
@@ -37,7 +38,28 @@
 
   gulp.task("eslint", function () {
     return gulp.src(paths.non_vendor_scripts)
-      .pipe(eslint())
+      .pipe(eslint({
+        rules: {
+          "eqeqeq": [2, "smart"],
+          "guard-for-in": 2,
+          "no-undef": 2,
+          "no-unused-vars": 0,
+          "strict": 2,
+          "new-cap": 0,
+          "quotes": 0,
+          "camelcase": 0,
+          "no-underscore-dangle": 0,
+          "no-new": 0,
+          "no-alert": 0,
+          "no-use-before-define": 0,
+          "consistent-return": 0,
+          "no-constant-condition": 0
+        },
+        globals: {
+          'console': true,
+          'jqWalkhub': true
+        },
+      }))
       .pipe(eslint.format())
       .pipe(eslint.failOnError());
   });
