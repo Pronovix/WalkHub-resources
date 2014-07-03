@@ -110,7 +110,7 @@
               var proxyuri = new URI(httpProxy);
               var proxyhostname = proxyuri.hostname();
               proxyuri
-                .hostname(protocol + "." + hostname + "." + port + "." + proxyhostname)
+                .hostname(CryptoJS.MD5(protocol + "." + hostname + "." + port) + "." + proxyhostname)
                 .search({url: url});
               window.location = proxyuri.toString();
             } else {
