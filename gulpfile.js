@@ -38,7 +38,8 @@
   gulp.task("eslint", function () {
     return gulp.src(paths.non_vendor_scripts)
       .pipe(eslint())
-      .pipe(eslint.format());
+      .pipe(eslint.format())
+      .pipe(eslint.failOnError());
   });
 
   gulp.task("buildjs", function () {
