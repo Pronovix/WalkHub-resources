@@ -3,6 +3,7 @@
     "browser": true
   },
     "globals": {
+      "CryptoJS": true,
       "Drupal": true,
       "drupalSettings": true,
       "domready": true,

@@ -20,7 +20,8 @@
       "src/javascript/noconflict.js",
       "src/javascript/jquery.cookie.js",
       "src/javascript/URI.js",
-      "src/javascript/modernizr.mq.js"
+      "src/javascript/modernizr.mq.js",
+      "src/javascript/md5.js"
     ],
     non_vendor_scripts: [
       "src/javascript/polyfill.js",
