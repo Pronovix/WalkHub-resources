@@ -14,6 +14,7 @@
     this.description = null;
     this.editdialog = null;
     this.resizeEventHandler = null;
+    this.stopAdjusting = false;
 
     this.nextButtonDisabled = false;
 
@@ -143,6 +144,14 @@
     $("body").append(this.tipGuide);
 
     this.reposition();
+    function reAdjust() {
+      that.reposition(true);
+      if (!that.stopAdjusting) {
+        setTimeout(reAdjust, 1000);
+      }
+    }
+
+    setTimeout(reAdjust, 500);
   };
 
   Walkhub.Bubble.prototype.hide = function () {
@@ -161,12 +170,15 @@
     this.editButton = null;
     this.title = null;
     this.description = null;
+    this.stopAdjusting = true;
   };
 
-  Walkhub.Bubble.prototype.reposition = function () {
+  Walkhub.Bubble.prototype.reposition = function (noScroll) {
     if (this.element) {
       this.moveBubble(this.element);
-      this.scrollToElement(this.element);
+      if (!noScroll) {
+        this.scrollToElement(this.element);
+      }
     } else {
       this.moveBubble(null);
     }
