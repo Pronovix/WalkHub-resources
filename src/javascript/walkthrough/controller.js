@@ -220,6 +220,12 @@
       }
     }
 
+    // Override step editing parameter if the global state requires it.
+    // For example during screening.
+    if (!this.state.allowEditing) {
+      step.canEdit = false;
+    }
+
     return step;
   };
 
