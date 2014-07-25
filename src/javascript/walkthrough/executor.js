@@ -133,12 +133,16 @@
   };
 
   Walkhub.Executor.negotiateWalkhubOrigin = function () {
-    if (Walkhub.ProxyOrigin) {
-      return Walkhub.ProxyOrigin();
+    if (Walkhub.ExtensionOrigin) {
+      return Walkhub.ExtensionOrigin();
     }
 
     if (Walkhub.Origin) {
       return Walkhub.Origin();
+    }
+
+    if (Walkhub.ProxyOrigin) {
+      return Walkhub.ProxyOrigin();
     }
 
     return window.location.hash.substr(1);
