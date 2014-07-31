@@ -17,6 +17,8 @@
       next: []
     };
 
+    this.playerMouseEventHandlerAdded = false;
+
     this.walkthrough = null;
     this.step = null;
 
@@ -38,6 +40,15 @@
           });
         }
       } else {
+        if (that.state.disableClicks && !that.playerMouseEventHandlerAdded) {
+          Walkhub.EventAbsorber.instance()
+            .disableHover()
+            .subscribeToMouseEvents(function (clickedElement, eventData) {
+              that.playerMouseEventHandler(clickedElement, eventData);
+            });
+
+          that.playerMouseEventHandlerAdded = true;
+        }
         if (that.state.walkthrough) {
           that.refreshWalkthrough(function () {
             if (that.state.step && !that.state.completed) {
@@ -56,6 +67,46 @@
     });
 
     this.client.start();
+  };
+
+  Walkhub.Controller.prototype.playerMouseEventHandler = function (clickedElement, eventData) {
+    if (!clickedElement) {
+      return;
+    }
+
+    if (clickedElement.length === 0) {
+      return;
+    }
+
+    var rawClickedElement = clickedElement.get(0);
+
+    if (this.clickShouldBeForwarded(clickedElement)) {
+      Walkhub.Util.clickOnElement(rawClickedElement, eventData);
+
+      if (Walkhub.Util.isInputElement(clickedElement)) {
+        clickedElement.focus();
+      }
+    } else {
+      if (window.confirm("This action is not part of the Walkthrough, to explore this page you can open it in a new tab.")) {
+        window.open(window.location.href, "_blank");
+      }
+    }
+  };
+
+  Walkhub.Controller.prototype.clickShouldBeForwarded = function (clickedElement) {
+    if (Walkhub.Util.isInputElement(clickedElement)) {
+      return true;
+    }
+
+    if (this.step && this.step.pureCommand && !Walkhub.editDialog.actionNotLocatorBased[this.step.pureCommand]) {
+      var locator = this.step.arg1;
+      var element = Walkhub.Translator.instance().translate(locator);
+      if (clickedElement.is(element)) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   Walkhub.Controller.prototype.getHTTPProxyURL = function () {

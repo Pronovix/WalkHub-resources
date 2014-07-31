@@ -264,7 +264,9 @@
   };
 
   Walkhub.Bubble.prototype.resetBubble = function () {
-    this.tipGuide.show();
+    if (this.tipGuide) {
+      this.tipGuide.show();
+    }
   };
 
   Walkhub.Bubble.prototype.getBubblePosition = function (element, orientation) {
