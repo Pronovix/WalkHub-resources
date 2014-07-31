@@ -133,9 +133,9 @@
           try {
             item = xpath(arg);
             // Intentional empty catch here.
-            // If there"s something wrong with the xpath,
-            // then it"s probably an older selenium test,
-            // and it"s not an xpath but a css selector.
+            // If there's something wrong with the xpath,
+            // then it's probably an older selenium test,
+            // and it's not an xpath but a css selector.
           } catch (ex) {}
           if (item === null || item.length === 0) {
             item = css(arg);

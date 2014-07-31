@@ -10,6 +10,7 @@
     this.activeElement = null;
     this.activeElementValue = null;
     this.previousHover = null;
+    this.hover = true;
 
     window.addEventListener("beforeunload", function () {
       $(window.document.activeElement).blur();
@@ -177,7 +178,19 @@
 
   Walkhub.EventAbsorber.prototype.refreshHover = function (event) {
     this.removeHover();
-    this.getElementAtEvent(event).addClass("walkthrough-eventabsorber-hover");
+    if (this.hover) {
+      this.getElementAtEvent(event).addClass("walkthrough-eventabsorber-hover");
+    }
+  };
+
+  Walkhub.EventAbsorber.prototype.disableHover = function () {
+    this.hover = false;
+    return this;
+  };
+
+  Walkhub.EventAbsorber.prototype.enableHover = function () {
+    this.hover = true;
+    return this;
   };
 
   Walkhub.EventAbsorber.prototype.handleHovering = function (event) {
