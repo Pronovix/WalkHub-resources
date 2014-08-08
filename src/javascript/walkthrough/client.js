@@ -77,8 +77,8 @@
 
     var ticket = window.Math.random().toString();
     this.tickets[ticket] = {
-      success: success,
-      error: error
+      success: success || function () {},
+      error: error || function () {}
     };
 
     var message = {
