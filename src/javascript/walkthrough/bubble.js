@@ -143,6 +143,7 @@
 
     $("body").append(this.tipGuide);
 
+    this.resetBubble();
     this.reposition();
     function reAdjust() {
       that.reposition(true);
@@ -174,6 +175,9 @@
   };
 
   Walkhub.Bubble.prototype.reposition = function (noScroll) {
+    if (this.tipGuide && this.tipGuide.css("display") === "none") {
+      return;
+    }
     if (this.element) {
       this.moveBubble(this.element);
       if (!noScroll) {
@@ -191,14 +195,19 @@
 
     var that = this;
 
+    Walkhub.EventAbsorber.instance().enableHover();
+
     Walkhub.EventAbsorber.instance().subscribeToMouseEvents(function editorElementClick (clickedElement) {
       var newLocator = Walkhub.LocatorGenerator.instance().generate(clickedElement);
       if (newLocator) {
         that.moveBubble(clickedElement);
+        that.element = clickedElement;
         $("#firstarg", that.editdialog.form).val(newLocator);
       } else {
         that.resetBubble();
       }
+
+      Walkhub.EventAbsorber.instance().disableHover();
 
       Walkhub.EventAbsorber.instance().unsubscribeFromMouseEvents(editorElementClick);
     });

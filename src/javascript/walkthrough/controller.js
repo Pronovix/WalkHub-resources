@@ -70,6 +70,10 @@
   };
 
   Walkhub.Controller.prototype.playerMouseEventHandler = function (clickedElement, eventData) {
+    if (Walkhub.Bubble.current && Walkhub.Bubble.current.editdialog) {
+      return;
+    }
+
     if (!clickedElement) {
       return;
     }
